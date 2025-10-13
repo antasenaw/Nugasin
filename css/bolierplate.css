@@ -1,72 +1,54 @@
-/* -----------------------------------------
-   🔧 Modern CSS Reset — Clean Base Setup
-   ----------------------------------------- */
+/* --- Simple CSS Reset --- */
 
-/* 1. Use a more-intuitive box-sizing model */
-*, *::before, *::after {
+/* 1. Remove default margin and padding */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-/* 2. Remove default margin and padding */
-* {
-  margin: 0;
-  padding: 0;
-}
-
-/* 3. Set core body defaults */
+/* 2. Ensure full height and consistent font inheritance */
 html, body {
-  height: 100vh;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  min-height: 100vh;
   font-size: 16px;
-  line-height: 1.5;
-  background-color: #fff;
-  color: #222;
+  color: black;
+   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-/* 4. Improve text rendering */
-body {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* 5. Make images and videos responsive */
+/* 3. Make images and media behave nicely */
 img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;
 }
 
-/* 6. Remove built-in form typography styles */
-input, button, textarea, select {
-  font: inherit;
-}
-
-/* 7. Remove animations and transitions for people who prefer reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-
-/* 8. Remove list styles on ul, ol elements with a list role */
-ul[role='list'], ol[role='list'] {
-  list-style: none;
-}
-
+/* 4. Remove default list styles */
 ul, ol {
   list-style: none;
 }
 
-/* 9. Anchor defaults */
+/* 5. Inherit fonts for form elements */
+input, button, textarea, select {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* 6. Anchor tags have no default underline or color */
 a {
   text-decoration: none;
   color: inherit;
 }
 
-/* 10. Smooth scrolling (optional) */
-html:focus-within {
+/* 7. Smooth scroll behavior (optional) */
+html {
   scroll-behavior: smooth;
 }
