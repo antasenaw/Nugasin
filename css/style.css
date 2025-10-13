@@ -40,7 +40,7 @@ li,
   display: flex;
   justify-content: space-between;
 
-  padding: 1rem;
+  padding: 2rem;
 }
 
 .add-button {
@@ -57,6 +57,7 @@ li,
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  /* flex-wrap: wrap; */
 }
 
 .task-row {
@@ -65,6 +66,7 @@ li,
   /* flex-wrap: wrap; */
 
   flex: 1 1 auto;
+  border: solid 1px black;
 }
 
 .task-container {
@@ -88,11 +90,12 @@ li,
   flex-direction: column;
   gap: 1rem;
   /* background-color: #353535; */
+  
 }
 
-.task-container h2 {
+/* .task-container h2 { */
   /* background-color: #BDBBB0; */
-}
+/* } */
 
 .task-item {
   cursor: pointer;
