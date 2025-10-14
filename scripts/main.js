@@ -2,30 +2,24 @@ import { render } from './render.js';
 
 render();
 
-// input pop up
-const overlayElem = document.querySelector('.overlay');
-const addBtn = document.querySelector('.add-button');
-const closeBtn = document.querySelector('.close-btn');
+export let inputArray = [];
 
-const inputToggle = (show) => overlayElem.classList.toggle('hidden', show);
+let itemHTML = '';
 
-addBtn.addEventListener('click', () => inputToggle(false));
-closeBtn.addEventListener('click', () => inputToggle(true));
-overlayElem.addEventListener('click', e => e.target === overlayElem && inputToggle(true));
-document.addEventListener('keydown', e => e.key === 'Escape' && inputToggle(true));
+inputArray.forEach(task => {
+  const item = `
+    <li class="task-item">
+      <div class="task-item-name">
+        <h3 id="item-title">${task.title}</h3>
+        <p>${task.subject} - ${task.due}</p>
+      </div>
+      <div class="task-item-button">
+        <button>Edit</button><button id="done-button">Tandai selesai</button>
+      </div>
+    </li>
+  `
+  itemHTML += item;
+  console.log(itemHTML);
+  document.querySelector('.task-item-container').insertAdjacentHTML('beforeend', itemHTML);
+})
 
-// get input
-const submitBtn = document.querySelector('.submit-task-btn');
-const form = document.querySelector('#task-form');
-// const title = document.querySelector('#title');
-// const subject = document.querySelector('#subject');
-// const due = document.querySelector('#due');
-// const details = document.querySelector('#details');
-
-// console.log(form);
-
-submitBtn.addEventListener('click', () => {
-  const taskData = new FormData(form);
-  const taskObj = Object.fromEntries(taskData.entries());
-  console.log(taskObj);
-});
