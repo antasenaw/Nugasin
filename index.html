@@ -12,20 +12,39 @@
 
   <body>
 
-    <div class="body-container">
+    <script type="module" src="scripts/main.js"></script>
 
-      <header class="header-container">
-        <h1>Nugasin</h1>
-        <button class="add-button">Tambah tugas</button>
-      </header>
+    <div class="overlay hidden">
 
-      <main class="main-container">
-        
-      </main>
+      <div class="add-task-container">
+          <div class="add-task-header">
+            <h2>Tambah tugas</h2>
+            <button class="close-btn">Tutup</button>
+          </div>
+
+        <form id="task-form">
+          <fieldset class="form-fieldset">
+
+            <label for="title">Judul tugas</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="subject">Subjek tugas</label>
+            <input type="text" id="subject" name="subject" required>
+            
+            <label for="due">Tenggat</label>
+            <input type="datetime-local" id="due" name="due" required>
+
+            <label for="details">Detail tugas</label>
+            <textarea id="details" name="details" required rows="1"></textarea>
+
+            <button type="submit" class="submit-task-btn">Tambah tugas</button>
+
+          </fieldset>
+        </form>
+
+      </div>
 
     </div>
-
-    <script type="module" src="script/main.js"></script>
 
   </body>
 
