@@ -1,5 +1,3 @@
-// import { inputArray } from "./data";
-
 export const bodyHTML = `
   <div class="body-container">
 
@@ -57,34 +55,24 @@ taskContainerName.forEach(nama => {
 
 export const inputFormHTML = `
   <div class="overlay hidden">
-
     <div class="add-task-container">
         <div class="add-task-header">
           <h2>Tambah tugas</h2>
           <button class="close-btn">Tutup</button>
         </div>
-
       <form id="task-form">
         <fieldset class="form-fieldset">
-
           <label for="title">Judul tugas</label>
           <input type="text" id="title" name="title" required>
-
           <label for="subject">Subjek tugas</label>
           <input type="text" id="subject" name="subject" required>
-          
           <label for="due">Tenggat</label>
           <input type="datetime-local" id="due" name="due" required>
-
           <label for="details">Detail tugas</label>
           <textarea id="details" name="details" required rows="1"></textarea>
-
           <button type="submit" class="submit-task-btn">Tambah tugas</button>
-
         </fieldset>
       </form>
-
     </div>
-
   </div>
 `
