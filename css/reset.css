@@ -11,7 +11,7 @@
 
 /* 2. Ensure full height and consistent font inheritance */
 html, body {
-  min-height: 100vh;
+  height: 100vh;
   font-size: 16px;
   text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
   color: black;
