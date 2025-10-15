@@ -11,105 +11,67 @@
   </head>
 
   <body>
+    
+
     <div class="body-container">
 
-      <header class="header-container">
+      <header class="header-container general-style">
         <h1>Nugasin</h1>
-        <button class="add-button">Tambah tugas</button>
+        <!-- <button class="add-button">Tambah tugas</button> -->
       </header>
 
       <main class="main-container">
-        <div class="task-row">
-          <section class="task-container">
-            <h2>memek</h2>
-            <ul class="task-item-container">
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - Tenggat: 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-            </ul>
-          </section>
-          <section class="task-container">
-            <h2>memek</h2>
-            <ul class="task-item-container">
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - Tenggat: 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-            </ul>
-          </section>
+        <div class="dash-board">
+          <div class="dash-column">
+            <section class="dash-item general-style">
+              <h2>Total tugas</h2>
+            </section>
+            <section class="dash-item general-style">
+              <h2>Selesai</h2>
+            </section>
+          </div>
+          <div class="dash-column">
+            <section class="dash-item general-style">
+              <h2>Dekat deadline</h2>
+            </section>
+            <section class="dash-item general-style">
+              <h2>Lewat deadline</h2>
+            </section>
+          </div>
+          
+            <section class="dash-acc general-style">
+              <h2>Progress</h2>
+            </section>
+          
         </div>
-        <div class="task-row">
-          <section class="task-container">
-            <h2>memek</h2>
-            <ul class="task-item-container">
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - Tenggat: 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-            </ul>
+
+        <div class="task-board">
+          <section class="task-input general-style">
+            <h2>Tambah tugas</h2>
+            <form class="task-form">
+              <fieldset class="form-fieldset">
+                <label for="title">Judul tugas</label>
+                <input class="general-style" type="text" id="title" name="title" required>
+                <label for="subject">Subjek tugas</label>
+                <input class="general-style" type="text" id="subject" name="subject" required>
+                <label for="due">Tenggat</label>
+                <input class="general-style" type="datetime-local" id="due" name="due" required>
+                <label for="details">Detail tugas</label>
+                <textarea class="general-style" id="details" name="details" required rows="1"></textarea>
+                <button type="submit" class="submit-task-btn general-style">Tambah tugas</button>
+              </fieldset>
+            </form>
           </section>
-          <section class="task-container">
-            <h2>memek</h2>
+          <section class="task-list general-style">
+            <h2>Daftar tugas</h2>
             <ul class="task-item-container">
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
+              <li class="task-item general-style">
+                <div class="task-item-info">
+                  <h3>tugas 1</h3>
                   <p>Aljabar - Tenggat: 20 Oktober 2025</p>
                 </div>
                 <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
-                </div>
-              </li>
-              <li class="task-item">
-                <div class="task-item-name">
-                  <h3 class="item-title">tugas 1</h3>
-                  <p>Aljabar - 20 Oktober 2025</p>
-                </div>
-                <div class="task-item-button">
-                  <button>Edit</button><button class="done-button">Tandai selesai</button>
+                  <button class="task-edit general-style">Edit</button><button class="task-delete general-style">Tandai selesai</button>
                 </div>
               </li>
             </ul>
