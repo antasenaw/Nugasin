@@ -1,5 +1,6 @@
-import { render } from './render.js';
-import { logic } from "./logic.js";
+import { view } from './view.js';
+import { controller } from "./controller.js";
 
-render();
-logic();
+// view();
+controller();
+
