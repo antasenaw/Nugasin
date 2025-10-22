@@ -52,9 +52,87 @@ import { inputArray } from "./model.js";
 //   });
 // }
 
-// export function controller() {
-//   const formElem = formElement();
-//   inputFormController(formElem);
-//   handleInputData(formElem);
-// }
+let isCd = false;
 
+export function controller() {
+  // const formElem = formElement();
+  // inputFormController(formElem);
+  renderTaskList();
+  handleFormSubmit();
+  // onDone();
+}
+
+function renderTaskList() {
+  let itemHTML = '';
+  let taskTotal = 0;
+
+  inputArray.forEach(task => {
+    const formattedDate = new Date(task.due).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    const item = `
+      <li class="task-item general-style">
+        <div class="task-item-info">
+          <h3>${task.title}</h3>
+          <p>${task.subject} - Deadline:  ${formattedDate}</p>
+        </div>
+        <div class="task-item-button">
+          <button class="task-edit general-style">Edit</button><button class="task-done general-style">Tandai selesai</button>
+        </div>
+      </li>
+    `
+    itemHTML += item;
+  });
+
+  document.querySelector('.task-item-container').innerHTML = itemHTML;
+
+  // form.reset();
+  // object.inputToggle(true);
+  console.log(inputArray);
+
+  updateTaskCount(taskTotal);
+
+  const doneBtn = document.querySelectorAll('.task-done');
+  onDone(doneBtn);
+}
+
+function handleFormSubmit() {
+  
+  const form = document.querySelector('.task-form');
+  let totalTask = 0;
+
+  form.addEventListener('submit', e => {
+      e.preventDefault();
+      const taskData = new FormData(form);
+      const taskObj = Object.fromEntries(taskData.entries());
+      inputArray.push(taskObj);
+      renderTaskList();
+  });
+}
+
+function updateTaskCount() {
+  const total = inputArray.length;
+  document.querySelector('.task-total').textContent = total;
+}
+
+
+function onDone(btn) {
+  btn.forEach((button, i)  => {
+    const index = i;
+    button.addEventListener('click', () => {
+      if (isCd) return;
+
+      console.log(i);
+      inputArray.splice(i, 1);
+      renderTaskList();
+
+      isCd = true;
+      setTimeout(() => {
+        isCd = false;
+      }, 500);
+    })
+  })
+}

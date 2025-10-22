@@ -9,9 +9,9 @@
 body {
   font-family: "Noto Sans Extralight", Arial, Helvetica, sans-serif;
   background-image: url('../assets/images/bg1.jpg');
-  background-size: cover;        /* fills screen, keeps aspect ratio */
-  background-position: center;   /* keeps image centered */
-  background-repeat: no-repeat;  /* no tiling */
+  background-size: cover;        
+  background-position: center;   
+  background-repeat: no-repeat;  
   background-attachment: fixed;
 
   color: white;
@@ -144,7 +144,7 @@ textarea {
   flex-direction: column;
 }
 
-.task-edit, .task-delete {
+.task-edit, .task-done {
   border-radius: 1rem;
   padding: .5rem 1rem; 
 }
