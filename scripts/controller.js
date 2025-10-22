@@ -52,8 +52,6 @@ import { inputArray } from "./model.js";
 //   });
 // }
 
-let isCd = false;
-
 export function controller() {
   // const formElem = formElement();
   // inputFormController(formElem);
@@ -64,18 +62,38 @@ export function controller() {
 
 function renderTaskList() {
   let itemHTML = '';
-  let toDoCount = inputArray.length;
   const countDisplay = {
     doneCount: 0,
     nearDue: 0,
-    pastDue: 0
+    pastDue: 0,
+    toDoCount: inputArray.length
   };
 
   inputArray.forEach(task => {
 
+    const dueDate = new Date(task.due);
+    const today = new Date();
+    const diffTime = dueDate - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    // console.log(dueDate, today, diffTime, diffDays)
+
+    if (diffDays <= 2 && diffDays >= 0) {
+      task.nearDue = true;
+      countDisplay.nearDue++;
+    } else if (diffDays < 0) {
+      task.pastDue = true;
+      countDisplay.pastDue++;
+    }
+    
     if (task.done) {
       countDisplay.doneCount++;
-      toDoCount--;
+      countDisplay.toDoCount--;
+      if (task.nearDue) {
+        countDisplay.nearDue--;
+      } else if (task.pastDue) {
+        countDisplay.pastDue--;
+      }
     }
 
     const formattedDate = new Date(task.due).toLocaleDateString('en-GB', {
@@ -104,8 +122,10 @@ function renderTaskList() {
   // object.inputToggle(true);
   console.log(inputArray);
 
-  updateTaskCount(toDoCount);
+  document.querySelector('.task-total').textContent = countDisplay.toDoCount;
   document.querySelector('.task-done-count').innerHTML = countDisplay.doneCount;
+  document.querySelector('.near-due').innerHTML = countDisplay.nearDue;
+  document.querySelector('.past-due').innerHTML = countDisplay.pastDue;
 
   const doneBtn = document.querySelectorAll('.task-done');
   onDone(doneBtn);
@@ -120,26 +140,23 @@ function handleFormSubmit() {
       const taskData = new FormData(form);
       const taskObj = Object.fromEntries(taskData.entries());
       taskObj.done = false;
-      // taskObj.nearDue = false;
-      // taskObj.pastDue = false;
+      taskObj.nearDue = false;
+      taskObj.pastDue = false;
       inputArray.push(taskObj);
       renderTaskList();
   });
 }
 
-function updateTaskCount(total) {
-  document.querySelector('.task-total').textContent = total;
-}
-
-
 function onDone(btn) {
+  let isCd = false;
+
   btn.forEach((button, i)  => {
     const index = i;
     button.addEventListener('click', () => {
       if (isCd) return;
 
-      console.log(i);
-      inputArray[i].done = true;
+      // console.log(i);
+      inputArray[i].done = !inputArray[i].done;
       renderTaskList();
 
       isCd = true;
