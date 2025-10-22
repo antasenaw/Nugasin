@@ -64,9 +64,20 @@ export function controller() {
 
 function renderTaskList() {
   let itemHTML = '';
-  let taskTotal = 0;
+  let toDoCount = inputArray.length;
+  const countDisplay = {
+    doneCount: 0,
+    nearDue: 0,
+    pastDue: 0
+  };
 
   inputArray.forEach(task => {
+
+    if (task.done) {
+      countDisplay.doneCount++;
+      toDoCount--;
+    }
+
     const formattedDate = new Date(task.due).toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'long',
@@ -77,9 +88,8 @@ function renderTaskList() {
       <li class="task-item general-style">
         <div class="task-item-info">
           <h3>${task.title}</h3>
-          <p>${task.subject} - Deadline:  ${formattedDate}</p>
+          <p>${task.subject} - Deadline:  ${formattedDate} ${task.done ? ' - Selesai' : ''}</p>
         </div>
-        ${task.done?'<p>se</p>':''}
         <div class="task-item-button">
           <button class="task-edit general-style">Edit</button><button class="task-done general-style">Tandai selesai</button>
         </div>
@@ -94,7 +104,8 @@ function renderTaskList() {
   // object.inputToggle(true);
   console.log(inputArray);
 
-  updateTaskCount(taskTotal);
+  updateTaskCount(toDoCount);
+  document.querySelector('.task-done-count').innerHTML = countDisplay.doneCount;
 
   const doneBtn = document.querySelectorAll('.task-done');
   onDone(doneBtn);
@@ -103,7 +114,6 @@ function renderTaskList() {
 function handleFormSubmit() {
   
   const form = document.querySelector('.task-form');
-  let totalTask = 0;
 
   form.addEventListener('submit', e => {
       e.preventDefault();
@@ -117,8 +127,7 @@ function handleFormSubmit() {
   });
 }
 
-function updateTaskCount() {
-  const total = inputArray.length;
+function updateTaskCount(total) {
   document.querySelector('.task-total').textContent = total;
 }
 
