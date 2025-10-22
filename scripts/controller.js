@@ -79,6 +79,7 @@ function renderTaskList() {
           <h3>${task.title}</h3>
           <p>${task.subject} - Deadline:  ${formattedDate}</p>
         </div>
+        ${task.done?'<p>se</p>':''}
         <div class="task-item-button">
           <button class="task-edit general-style">Edit</button><button class="task-done general-style">Tandai selesai</button>
         </div>
@@ -108,6 +109,9 @@ function handleFormSubmit() {
       e.preventDefault();
       const taskData = new FormData(form);
       const taskObj = Object.fromEntries(taskData.entries());
+      taskObj.done = false;
+      // taskObj.nearDue = false;
+      // taskObj.pastDue = false;
       inputArray.push(taskObj);
       renderTaskList();
   });
@@ -126,7 +130,7 @@ function onDone(btn) {
       if (isCd) return;
 
       console.log(i);
-      inputArray.splice(i, 1);
+      inputArray[i].done = true;
       renderTaskList();
 
       isCd = true;
