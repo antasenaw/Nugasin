@@ -197,6 +197,10 @@ textarea {
 } */
 
 @media (max-width: 760px) {
+  /* html, body {
+    font-size: 14px;
+  } */
+
   .body-container {
     margin: 1rem;
   }

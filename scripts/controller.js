@@ -53,11 +53,8 @@ import { inputArray } from "./model.js";
 // }
 
 export function controller() {
-  // const formElem = formElement();
-  // inputFormController(formElem);
   renderTaskList();
   handleFormSubmit();
-  // onDone();
 }
 
 function renderTaskList() {
@@ -75,8 +72,6 @@ function renderTaskList() {
     const today = new Date();
     const diffTime = dueDate - today;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    // console.log(dueDate, today, diffTime, diffDays)
 
     if (diffDays <= 2 && diffDays >= 0) {
       task.nearDue = true;
@@ -106,10 +101,10 @@ function renderTaskList() {
       <li class="task-item general-style">
         <div class="task-item-info">
           <h3>${task.title}</h3>
-          <p>${task.subject} - Deadline:  ${formattedDate} ${task.done ? ' - Selesai' : ''}</p>
+          <p>${task.subject} - Deadline:  ${formattedDate} ${(task.done && task.pastDue) ? ' - Selesai terlambat' : task.done ? ' - Selesai' : task.nearDue ? ' - Belum dikerjakan (Dekat deadline!)' : task.pastDue ? ' - Belum dikerjakan (Lewat deadline!)' : ' - Belum dikerjakan'}</p>
         </div>
         <div class="task-item-button">
-          <button class="task-edit general-style">Edit</button><button class="task-done general-style">Tandai selesai</button>
+          <button class="task-edit general-style">Edit</button><button class="task-done general-style">${task.done ? 'Batal' : 'Tandai selesai'}</button>
         </div>
       </li>
     `
@@ -118,7 +113,6 @@ function renderTaskList() {
 
   document.querySelector('.task-item-container').innerHTML = itemHTML;
 
-  // form.reset();
   // object.inputToggle(true);
   console.log(inputArray);
 
@@ -144,6 +138,7 @@ function handleFormSubmit() {
       taskObj.pastDue = false;
       inputArray.push(taskObj);
       renderTaskList();
+      form.reset();
   });
 }
 
