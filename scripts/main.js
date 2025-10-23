@@ -2,10 +2,27 @@
 
 const taskItemContainer = document.querySelector('.task-item-container');
 const form = document.querySelector('.task-form');
+const totalTaskElement = document.querySelector('.task-total');
+const doneTaskElement = document.querySelector('.task-done-count');
+const nearDueTaskElement = document.querySelector('.near-due');
+const pastDueTaskElement = document.querySelector('.past-due');
+
 
 //MODEL
 
 const taskArray = [];
+
+function calculateTaskCount() {
+  const done = taskArray.filter(task => task.done).length;
+  const nearDue = taskArray.filter(task => task.nearDue).length;
+  const pastDue = taskArray.filter(task => task.pastDue).length;
+  return {
+    total: taskArray.length - done,
+    done,
+    nearDue,
+    pastDue
+  };
+}
 
 //VIEW
 
@@ -28,9 +45,9 @@ function getTaskStatus(task) {
 
 function displayArray() {
   let taskItemHTML = '';
-  taskArray.forEach(task => {
+  taskArray.forEach((task, i) => {
     taskItemHTML += `
-      <li class="task-item general-style">
+      <li class="task-item general-style" data-index="${i}">
         <div class="task-item-info">
           <h3>${task.title}</h3>
           <p>${task.subject} - Deadline:  ${formatDate(task.due)} ${getTaskStatus(task)}</p>
@@ -45,9 +62,20 @@ function displayArray() {
   taskItemContainer.innerHTML = taskItemHTML;
 }
 
+function displayCounters() {
+  const counters = calculateTaskCount();
+  totalTaskElement.innerHTML = counters.total;
+  doneTaskElement.innerHTML = counters.done;
+}
+
+function render() {
+  displayArray();
+  displayCounters();
+}
+
 //CONTROLLER
 
-function insertTaskDataToArrayOnFormSubmit(params) {
+function insertTaskDataToArrayOnFormSubmit() {
   form.addEventListener('submit', e => {
     e.preventDefault();
     const taskData = new FormData(form);
@@ -57,11 +85,20 @@ function insertTaskDataToArrayOnFormSubmit(params) {
     taskObj.pastDue = false;
     taskArray.push(taskObj);
     console.log(taskArray);
-    displayArray();
+    render();
   });  
 }
 
+taskItemContainer.addEventListener('click', e => {
+  if (e.target.classList.contains('task-done')) {
+    console.log('mmk');
+    const index = e.target.closest('li').dataset.index;
+    taskArray[index].done = !taskArray[index].done;
+    render();
+  }
+})
+
 //MAIN
 
-displayArray();
+render();
 insertTaskDataToArrayOnFormSubmit();
