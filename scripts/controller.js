@@ -55,7 +55,6 @@ import { inputArray } from "./model.js";
 export function controller() {
   renderTaskList();
   handleFormSubmit();
-  closePopUp();
 }
 
 function renderTaskList() {
@@ -115,21 +114,19 @@ function renderTaskList() {
   document.querySelector('.task-item-container').innerHTML = itemHTML;
 
   // object.inputToggle(true);
-  console.log(inputArray);
+  // console.log(inputArray);
 
   document.querySelector('.task-total').textContent = countDisplay.toDoCount;
   document.querySelector('.task-done-count').innerHTML = countDisplay.doneCount;
   document.querySelector('.near-due').innerHTML = countDisplay.nearDue;
   document.querySelector('.past-due').innerHTML = countDisplay.pastDue;
 
-  const doneBtn = document.querySelectorAll('.task-done');
-  const taskItem = document.querySelectorAll('.task-item')
-  markTaskAsDone(doneBtn);
-  showTaskDetails(taskItem);
+  controlTask();
 }
 
 function handleFormSubmit() {
   
+  // closePopUpListener();
   const form = document.querySelector('.task-form');
 
   form.addEventListener('submit', e => {
@@ -152,7 +149,6 @@ function markTaskAsDone(btn) {
     button.addEventListener('click', () => {
       if (isCd) return;
 
-      // console.log(i);
       inputArray[i].done = !inputArray[i].done;
       renderTaskList();
 
@@ -160,36 +156,13 @@ function markTaskAsDone(btn) {
       setTimeout(() => {
         isCd = false;
       }, 500);
-    })
-  })
-}
-
-function showTaskDetails (task) {
-  const overlay = document.querySelector('.overlay');
-  task.forEach(item => {
-    item.addEventListener('click', e => {
-      if (e.target === item){
-        console.log('mmk');
-        overlay.classList.toggle('hidden');
-      }
-    })
-  })
-}
-  
-function overlayClose() {
-  const overlay = document.querySelector('.overlay');
-  overlay.classList.toggle('hidden');
-}
-
-
-function closePopUp() {
-  const overlay = document.querySelector('.overlay');
-  
-  const overlayCloseBtn = document.querySelector('.detail-header button');
-
-  overlay.addEventListener('click', e => e.target === overlay && overlayClose())
-
-  overlayCloseBtn.addEventListener('click', () => {
-    overlayClose();
+    });
   });
+}
+
+
+
+function controlTask() {
+  const doneBtn = document.querySelectorAll('.task-done');
+  markTaskAsDone(doneBtn);
 }
