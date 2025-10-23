@@ -55,6 +55,7 @@ import { inputArray } from "./model.js";
 export function controller() {
   renderTaskList();
   handleFormSubmit();
+  closePopUp();
 }
 
 function renderTaskList() {
@@ -122,7 +123,9 @@ function renderTaskList() {
   document.querySelector('.past-due').innerHTML = countDisplay.pastDue;
 
   const doneBtn = document.querySelectorAll('.task-done');
-  onDone(doneBtn);
+  const taskItem = document.querySelectorAll('.task-item')
+  markTaskAsDone(doneBtn);
+  showTaskDetails(taskItem);
 }
 
 function handleFormSubmit() {
@@ -142,11 +145,10 @@ function handleFormSubmit() {
   });
 }
 
-function onDone(btn) {
+function markTaskAsDone(btn) {
   let isCd = false;
 
   btn.forEach((button, i)  => {
-    const index = i;
     button.addEventListener('click', () => {
       if (isCd) return;
 
@@ -160,4 +162,34 @@ function onDone(btn) {
       }, 500);
     })
   })
+}
+
+function showTaskDetails (task) {
+  const overlay = document.querySelector('.overlay');
+  task.forEach(item => {
+    item.addEventListener('click', e => {
+      if (e.target === item){
+        console.log('mmk');
+        overlay.classList.toggle('hidden');
+      }
+    })
+  })
+}
+  
+function overlayClose() {
+  const overlay = document.querySelector('.overlay');
+  overlay.classList.toggle('hidden');
+}
+
+
+function closePopUp() {
+  const overlay = document.querySelector('.overlay');
+  
+  const overlayCloseBtn = document.querySelector('.detail-header button');
+
+  overlay.addEventListener('click', e => e.target === overlay && overlayClose())
+
+  overlayCloseBtn.addEventListener('click', () => {
+    overlayClose();
+  });
 }
