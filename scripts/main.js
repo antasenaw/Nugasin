@@ -10,12 +10,40 @@ const pastDueTaskElement = document.querySelector('.past-due');
 
 //MODEL
 
-const taskArray = [];
+const taskArray = [
+  {
+    details: "Tulis di kertas selembar dan ewe ewe kan dengan hayam",
+    due: "2025-10-30T23:59",
+    subject: "Aljabar",
+    title: "Tugas 2"
+  },
+  {
+    details: "Ketik di LibreOffice dan ewe ewe kan dengan kambing",
+    due: "2025-10-24T23:59",
+    subject: "Kalkulus",
+    title: "Tugas 3"
+  },
+  {
+    details: "Ketik di LibreOffice dan ewe ewe kan dengan kambing",
+    due: "2025-10-20T23:59",
+    subject: "PBO",
+    title: "Tugas 1"
+  }
+];
 
 function calculateTaskCount() {
-  const done = taskArray.filter(task => task.done).length;
-  const nearDue = taskArray.filter(task => task.nearDue).length;
-  const pastDue = taskArray.filter(task => task.pastDue).length;
+  const now = new Date();
+  let done = 0, nearDue = 0, pastDue = 0;
+
+  taskArray.forEach(task => {
+    const due = new Date(task.due);
+    const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+
+    if (task.done) done++;
+    else if (diffDays <= 0) pastDue++;
+    else if (diffDays <= 2) nearDue++;
+  });
+
   return {
     total: taskArray.length - done,
     done,
@@ -23,6 +51,19 @@ function calculateTaskCount() {
     pastDue
   };
 }
+
+function updateTaskStatuses() {
+  const now = new Date();
+  taskArray.forEach(task => {
+    const due = new Date(task.due);
+    const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+
+    // Reset and recalculate
+    task.pastDue = diffDays <= 0 && !task.done;
+    task.nearDue = diffDays <= 2 && !task.done;
+  });
+}
+
 
 //VIEW
 
@@ -36,10 +77,14 @@ function formatDate(dateString) {
 }
 
 function getTaskStatus(task) {
-  if (task.done && task.pastDue) return ' - Selesai terlambat';
+  const now = new Date();
+  const due = new Date(task.due);
+  const isLate = task.done && due < now;
+  
+  if (isLate) return ' - Selesai terlambat';
   if (task.done) return ' - Selesai';
-  if (task.nearDue) return ' - Belum dikerjakan (Dekat deadline!)';
   if (task.pastDue) return ' - Belum dikerjakan (Lewat deadline!)';
+  if (task.nearDue) return ' - Belum dikerjakan (Dekat deadline!)';
   return ' - Belum dikerjakan';
 }
 
@@ -66,9 +111,12 @@ function displayCounters() {
   const counters = calculateTaskCount();
   totalTaskElement.innerHTML = counters.total;
   doneTaskElement.innerHTML = counters.done;
+  nearDueTaskElement.innerHTML = counters.nearDue;
+  pastDueTaskElement.innerHTML = counters.pastDue;
 }
 
 function render() {
+  updateTaskStatuses();
   displayArray();
   displayCounters();
 }
