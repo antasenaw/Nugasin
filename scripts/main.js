@@ -6,6 +6,7 @@ const totalTaskElement = document.querySelector('.task-total');
 const doneTaskElement = document.querySelector('.task-done-count');
 const nearDueTaskElement = document.querySelector('.near-due');
 const pastDueTaskElement = document.querySelector('.past-due');
+const overlay = document.querySelector('.overlay');
 
 
 //MODEL
@@ -24,7 +25,7 @@ const taskArray = [
     title: "Tugas 3"
   },
   {
-    details: "Ketik di LibreOffice dan ewe ewe kan dengan kambing",
+    details: "Ketik di LibreOffice dan ewe ewe kan dengan sapi",
     due: "2025-10-20T23:59",
     subject: "PBO",
     title: "Tugas 1"
@@ -64,7 +65,6 @@ function updateTaskStatuses() {
   });
 }
 
-
 //VIEW
 
 function formatDate(dateString) {
@@ -81,11 +81,11 @@ function getTaskStatus(task) {
   const due = new Date(task.due);
   const isLate = task.done && due < now;
   
-  if (isLate) return ' - Selesai terlambat';
-  if (task.done) return ' - Selesai';
-  if (task.pastDue) return ' - Belum dikerjakan (Lewat deadline!)';
-  if (task.nearDue) return ' - Belum dikerjakan (Dekat deadline!)';
-  return ' - Belum dikerjakan';
+  if (isLate) return 'Selesai terlambat';
+  if (task.done) return 'Selesai';
+  if (task.pastDue) return 'Belum dikerjakan (Lewat deadline!)';
+  if (task.nearDue) return 'Belum dikerjakan (Dekat deadline!)';
+  return 'Belum dikerjakan';
 }
 
 function displayArray() {
@@ -95,7 +95,7 @@ function displayArray() {
       <li class="task-item general-style" data-index="${i}">
         <div class="task-item-info">
           <h3>${task.title}</h3>
-          <p>${task.subject} - Deadline:  ${formatDate(task.due)} ${getTaskStatus(task)}</p>
+          <p>${task.subject} - Deadline:  ${formatDate(task.due)} - ${getTaskStatus(task)}</p>
         </div>
         <div class="task-item-button">
           <button class="task-edit general-style">Edit</button>
@@ -113,6 +113,25 @@ function displayCounters() {
   doneTaskElement.innerHTML = counters.done;
   nearDueTaskElement.innerHTML = counters.nearDue;
   pastDueTaskElement.innerHTML = counters.pastDue;
+}
+
+function displayTaskDetailsPopUp(task) {
+  overlay.innerHTML = `
+    <div class="detail-popup general-style">
+      <div class="detail-header">
+        <h2>${task.title}</h2><button class="popup-close-btn general-style">Tutup</button>
+      </div>
+      <div class="detail-info">
+        <p>Subjek: ${task.subject}</p>
+        <p>Deadline: ${formatDate(task.due)}</p>
+        <p>Status: ${getTaskStatus(task)}</p>
+      </div>
+      <div class="detail-desc">
+        <p>Detail: </p>
+        <p>${task.details}</p>
+      </div>
+    </div>
+  `
 }
 
 function render() {
@@ -137,14 +156,30 @@ function insertTaskDataToArrayOnFormSubmit() {
   });  
 }
 
+function overlayToggle() {
+  overlay.classList.toggle('hidden');
+}
+
 taskItemContainer.addEventListener('click', e => {
+  const taskLi = e.target.closest('li'); 
+  const index = taskLi.dataset.index;
+  const task = taskArray[index];
+
   if (e.target.classList.contains('task-done')) {
-    console.log('mmk');
-    const index = e.target.closest('li').dataset.index;
-    taskArray[index].done = !taskArray[index].done;
+    task.done = !task.done;
     render();
+  } else if (taskLi) {
+    console.log('memek');
+    displayTaskDetailsPopUp(task);
+    overlayToggle();
   }
-})
+});
+
+overlay.addEventListener('click',  e => {
+  if (e.target.classList.contains('popup-close-btn') || e.target === overlay) {
+    overlayToggle();
+  }
+});
 
 //MAIN
 
