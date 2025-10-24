@@ -162,6 +162,7 @@ function overlayToggle() {
 
 taskItemContainer.addEventListener('click', e => {
   const taskLi = e.target.closest('li'); 
+  if (!taskLi) return;
   const index = taskLi.dataset.index;
   const task = taskArray[index];
 
@@ -169,7 +170,6 @@ taskItemContainer.addEventListener('click', e => {
     task.done = !task.done;
     render();
   } else if (taskLi) {
-    console.log('memek');
     displayTaskDetailsPopUp(task);
     overlayToggle();
   }
@@ -178,6 +178,7 @@ taskItemContainer.addEventListener('click', e => {
 overlay.addEventListener('click',  e => {
   if (e.target.classList.contains('popup-close-btn') || e.target === overlay) {
     overlayToggle();
+    overlay.innerHTML = '';
   }
 });
 
