@@ -13,19 +13,19 @@ const overlay = document.querySelector('.overlay');
 
 const taskArray = [
   {
-    details: "Tulis di kertas selembar dan ewe ewe kan dengan hayam",
+    details: "Tulis di kertas selembar dan makan dengan hayam",
     due: "2025-10-30T23:59",
     subject: "Aljabar",
     title: "Tugas 2"
   },
   {
-    details: "Ketik di LibreOffice dan ewe ewe kan dengan kambing",
+    details: "Ketik di LibreOffice dan makan dengan kambing",
     due: "2025-10-24T23:59",
     subject: "Kalkulus",
     title: "Tugas 3"
   },
   {
-    details: "Ketik di LibreOffice dan ewe ewe kan dengan sapi",
+    details: "Ketik di LibreOffice dan makan dengan sapi",
     due: "2025-10-20T23:59",
     subject: "PBO",
     title: "Tugas 1"
@@ -69,11 +69,16 @@ function updateTaskStatuses() {
 
 function formatDate(dateString) {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-GB', {
+  const formattedDate = date.toLocaleDateString('en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric'
   });
+  const formattedTime = date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  return `${formattedDate}, ${formattedTime}`;
 }
 
 function getTaskStatus(task) {
