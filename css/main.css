@@ -104,6 +104,19 @@ textarea {
   border-radius: 1rem;
 }
 
+.task-input h2, .task-input form {
+  margin: 0;
+}
+
+.task-input-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-input-header button {
+  padding: 0 1rem;
+}
+
 .task-list {
   flex: 3 1 0;
   padding: 1.5rem;

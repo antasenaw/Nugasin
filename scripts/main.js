@@ -3,14 +3,13 @@
 let isEditing = false;
 let taskIndex;
 
-const now = new Date();
-
 const taskItemContainer = document.querySelector('.task-item-container');
 
 const form = document.querySelector('.task-form');
 const titleInput = document.querySelector('input[name="title"]');
 const inputFormHeader = document.querySelector('.task-input h2');
 const inputFormButton = document.querySelector('.form-fieldset button');
+const cancelEditBtn = document.querySelector('.cancel-edit-btn');
 
 const totalTaskElement = document.querySelector('.task-total');
 const doneTaskElement = document.querySelector('.task-done-count');
@@ -44,7 +43,7 @@ const taskArray = [
 ];
 
 function calculateTaskCount() {
-  
+  const now = new Date();
   let done = 0, nearDue = 0, pastDue = 0;
 
   taskArray.forEach(task => {
@@ -65,7 +64,7 @@ function calculateTaskCount() {
 }
 
 function updateTaskStatuses() {
-  
+  const now = new Date();
   taskArray.forEach(task => {
     const due = new Date(task.due);
     const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
@@ -104,7 +103,7 @@ function formatDate(dateString) {
 }
 
 function getTaskStatus(task) {
-  
+  const now = new Date();
   const due = new Date(task.due);
   const isLate = task.done && due < now;
   
@@ -174,20 +173,32 @@ function render() {
 
 //CONTROLLER
 
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const taskObj = getDataFromForm();
-    
-    if (isEditing) {
-      taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
-      isEditing = false;
-      inputFormHeaderIsEditingToggle(false);
-    } else {
-      taskArray.push(taskObj);
-    }
-    render();
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  const taskObj = getDataFromForm();
+  
+  if (isEditing) {
+    taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
+    isEditing = false;
+    inputFormHeaderIsEditingToggle(false);
+    cancelEditBtnToggle(true);
+  } else {
+    taskArray.push(taskObj);
+  }
+  render();
+  form.reset();
+});
+
+cancelEditBtn.addEventListener('click', e => {
+    isEditing = false;
+    inputFormHeaderIsEditingToggle(false);
+    cancelEditBtnToggle(true);
     form.reset();
-  });
+});
+
+function cancelEditBtnToggle(toggle) {
+  cancelEditBtn.classList.toggle('hidden', toggle);
+}
 
 function overlayToggle() {
   overlay.classList.toggle('hidden');
@@ -212,6 +223,8 @@ taskItemContainer.addEventListener('click', e => {
     form.subject.value = taskArray[index].subject;
     form.due.value = taskArray[index].due;
     form.details.value = taskArray[index].details;
+
+    cancelEditBtnToggle(false);
   } else if (taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
