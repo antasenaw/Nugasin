@@ -3,11 +3,14 @@
 let isEditing = false;
 let taskIndex;
 
+const now = new Date();
+
 const taskItemContainer = document.querySelector('.task-item-container');
 
 const form = document.querySelector('.task-form');
 const titleInput = document.querySelector('input[name="title"]');
 const inputFormHeader = document.querySelector('.task-input h2');
+const inputFormButton = document.querySelector('.form-fieldset button');
 
 const totalTaskElement = document.querySelector('.task-total');
 const doneTaskElement = document.querySelector('.task-done-count');
@@ -41,7 +44,7 @@ const taskArray = [
 ];
 
 function calculateTaskCount() {
-  const now = new Date();
+  
   let done = 0, nearDue = 0, pastDue = 0;
 
   taskArray.forEach(task => {
@@ -62,7 +65,7 @@ function calculateTaskCount() {
 }
 
 function updateTaskStatuses() {
-  const now = new Date();
+  
   taskArray.forEach(task => {
     const due = new Date(task.due);
     const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
@@ -76,9 +79,11 @@ function updateTaskStatuses() {
 function getDataFromForm() {
   const taskData = new FormData(form);
   const taskObj = Object.fromEntries(taskData.entries());
-  taskObj.done = false;
-  taskObj.nearDue = false;
-  taskObj.pastDue = false;
+  if (!isEditing) {
+    taskObj.done = false;
+    taskObj.nearDue = false;
+    taskObj.pastDue = false;
+  }
   return taskObj;
 }
 
@@ -99,7 +104,7 @@ function formatDate(dateString) {
 }
 
 function getTaskStatus(task) {
-  const now = new Date();
+  
   const due = new Date(task.due);
   const isLate = task.done && due < now;
   
@@ -158,6 +163,7 @@ function displayTaskDetailsPopUp(task) {
 
 function inputFormHeaderIsEditingToggle(isEditing) {
   inputFormHeader.textContent = isEditing ? 'Edit tugas' : 'Tambah tugas'
+  inputFormButton.textContent = isEditing ? 'Edit tugas' : 'Tambah tugas'
 }
 
 function render() {
@@ -173,14 +179,14 @@ function render() {
     const taskObj = getDataFromForm();
     
     if (isEditing) {
+      taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
       isEditing = false;
-      taskArray[taskIndex] = taskObj;
-      render();
+      inputFormHeaderIsEditingToggle(false);
     } else {
       taskArray.push(taskObj);
-      // form.reset;
-      render();
     }
+    render();
+    form.reset();
   });
 
 function overlayToggle() {
@@ -198,9 +204,14 @@ taskItemContainer.addEventListener('click', e => {
     render();
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
-    inputFormHeaderIsEditingToggle(true);
     isEditing = true;
     taskIndex = index;
+    inputFormHeaderIsEditingToggle(true);
+
+    form.title.value = taskArray[index].title;
+    form.subject.value = taskArray[index].subject;
+    form.due.value = taskArray[index].due;
+    form.details.value = taskArray[index].details;
   } else if (taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
@@ -209,8 +220,8 @@ taskItemContainer.addEventListener('click', e => {
 
 overlay.addEventListener('click',  e => {
   if (e.target.classList.contains('popup-close-btn') || e.target === overlay) {
-    overlayToggle();
     overlay.innerHTML = '';
+    overlayToggle();
   }
 });
 
