@@ -238,6 +238,11 @@ textarea {
     z-index: -1;
 } */
 
+/* .form-image {
+  max-width: 100%;
+  min-height: 100%;
+} */
+
 @media (max-width: 760px) {
   /* html, body {
     font-size: 14px;

@@ -1,11 +1,19 @@
-//DOM REFERENCES
+//DOM REFERENCES AND FLAGS
+
+let isEditing = false;
+let taskIndex;
 
 const taskItemContainer = document.querySelector('.task-item-container');
+
 const form = document.querySelector('.task-form');
+const titleInput = document.querySelector('input[name="title"]');
+const inputFormHeader = document.querySelector('.task-input h2');
+
 const totalTaskElement = document.querySelector('.task-total');
 const doneTaskElement = document.querySelector('.task-done-count');
 const nearDueTaskElement = document.querySelector('.near-due');
 const pastDueTaskElement = document.querySelector('.past-due');
+
 const overlay = document.querySelector('.overlay');
 
 
@@ -20,7 +28,7 @@ const taskArray = [
   },
   {
     details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-24T23:59",
+    due: "2025-10-25T23:59",
     subject: "Kalkulus",
     title: "Tugas 3"
   },
@@ -63,6 +71,15 @@ function updateTaskStatuses() {
     task.pastDue = diffDays <= 0 && !task.done;
     task.nearDue = diffDays <= 2 && !task.done;
   });
+}
+
+function getDataFromForm() {
+  const taskData = new FormData(form);
+  const taskObj = Object.fromEntries(taskData.entries());
+  taskObj.done = false;
+  taskObj.nearDue = false;
+  taskObj.pastDue = false;
+  return taskObj;
 }
 
 //VIEW
@@ -139,6 +156,10 @@ function displayTaskDetailsPopUp(task) {
   `
 }
 
+function inputFormHeaderIsEditingToggle(isEditing) {
+  inputFormHeader.textContent = isEditing ? 'Edit tugas' : 'Tambah tugas'
+}
+
 function render() {
   updateTaskStatuses();
   displayArray();
@@ -147,19 +168,20 @@ function render() {
 
 //CONTROLLER
 
-function insertTaskDataToArrayOnFormSubmit() {
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const taskData = new FormData(form);
-    const taskObj = Object.fromEntries(taskData.entries());
-    taskObj.done = false;
-    taskObj.nearDue = false;
-    taskObj.pastDue = false;
-    taskArray.push(taskObj);
-    console.log(taskArray);
-    render();
-  });  
-}
+    const taskObj = getDataFromForm();
+    
+    if (isEditing) {
+      isEditing = false;
+      taskArray[taskIndex] = taskObj;
+      render();
+    } else {
+      taskArray.push(taskObj);
+      // form.reset;
+      render();
+    }
+  });
 
 function overlayToggle() {
   overlay.classList.toggle('hidden');
@@ -174,6 +196,11 @@ taskItemContainer.addEventListener('click', e => {
   if (e.target.classList.contains('task-done')) {
     task.done = !task.done;
     render();
+  } else if (e.target.classList.contains('task-edit')) {
+    titleInput.focus();
+    inputFormHeaderIsEditingToggle(true);
+    isEditing = true;
+    taskIndex = index;
   } else if (taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
@@ -190,4 +217,3 @@ overlay.addEventListener('click',  e => {
 //MAIN
 
 render();
-insertTaskDataToArrayOnFormSubmit();
