@@ -3,6 +3,8 @@
 let isEditing = false;
 let taskIndex;
 
+const mainFilterBtn = document.querySelector('.main-filter-btn');
+const filterBtnArr = document.querySelectorAll('.filter-btn');
 const taskItemContainer = document.querySelector('.task-item-container');
 
 const form = document.querySelector('.task-form');
@@ -165,6 +167,19 @@ function inputFormHeaderIsEditingToggle(isEditing) {
   inputFormButton.textContent = isEditing ? 'Edit tugas' : 'Tambah tugas'
 }
 
+
+function cancelEditBtnToggle(toggle) {
+  cancelEditBtn.classList.toggle('hidden', toggle);
+}
+
+function overlayToggle() {
+  overlay.classList.toggle('hidden');
+}
+
+function filterBtnsToggle(btn, state) {
+  btn.classList.toggle('hidden', state);
+}
+
 function render() {
   updateTaskStatuses();
   displayArray();
@@ -195,14 +210,6 @@ cancelEditBtn.addEventListener('click', e => {
     cancelEditBtnToggle(true);
     form.reset();
 });
-
-function cancelEditBtnToggle(toggle) {
-  cancelEditBtn.classList.toggle('hidden', toggle);
-}
-
-function overlayToggle() {
-  overlay.classList.toggle('hidden');
-}
 
 taskItemContainer.addEventListener('click', e => {
   const taskLi = e.target.closest('li'); 
@@ -237,6 +244,23 @@ overlay.addEventListener('click',  e => {
     overlayToggle();
   }
 });
+
+mainFilterBtn.addEventListener('click', () => {
+  filterBtnsToggle(mainFilterBtn, true);
+  filterBtnArr.forEach(btn => {
+    filterBtnsToggle(btn, false);
+  })
+});
+
+filterBtnArr.forEach(btn => {
+  btn.addEventListener('click', () => {
+    mainFilterBtn.innerHTML = `Filter: ${btn.dataset.filter}`;
+    filterBtnArr.forEach(btn => {
+      filterBtnsToggle(btn, true);
+    });
+    filterBtnsToggle(mainFilterBtn, false);
+  });
+})
 
 //MAIN
 

@@ -48,9 +48,18 @@
 
         <div class="task-board">
           <section class="task-list general-style">
-            <h2>Daftar tugas</h2>
-            <ul class="task-item-container">
-            </ul>
+            <div class="task-list-header">
+              <h2>Daftar tugas</h2>
+              <div>
+                <button class="general-style main-filter-btn">Filter: Semua</button>
+                <button class="general-style filter-btn hidden" data-filter="Semua">Semua</button>
+                <button class="general-style filter-btn hidden" data-filter="Belum dikerjakan">Belum dikerjakan</button>
+                <button class="general-style filter-btn hidden" data-filter="Dekat deadline">Dekat deadline</button>
+                <button class="general-style filter-btn hidden" data-filter="Lewat deadline">Lewat deadline</button>
+                <button class="general-style filter-btn hidden" data-filter="Selesai">Selesai</button>
+              </div>
+            </div>
+            <ul class="task-item-container"></ul>
           </section>
           <section class="task-input general-style">
             <div class="task-input-header">
@@ -68,7 +77,6 @@
                 <label for="details">Detail tugas</label>
                 <textarea class="general-style" id="details" name="details" required rows="1"></textarea>
                 <button type="submit" class="submit-task-btn general-style">Tambah tugas</button>
-                <!-- <img class="general-style form-image" src="./assets/images/bg1.jpg" alt=""> -->
               </fieldset>
             </form>
           </section>

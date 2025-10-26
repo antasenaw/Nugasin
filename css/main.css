@@ -124,6 +124,20 @@ textarea {
   border-radius: 1rem;
 }
 
+.task-list-header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.task-list-header div {
+  display: flex;
+  gap: 1rem;
+}
+
+.task-list-header button {
+  padding: 0 1rem;
+}
+
 .task-item-container {
   margin-top: 1.5rem;
   border-radius: 1rem;
