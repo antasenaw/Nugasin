@@ -211,13 +211,13 @@ form.addEventListener('submit', e => {
   const taskObj = getDataFromForm();
   
   if (isEditing) {
-    filteredArray[taskIndex] = {...filteredArray[taskIndex], ...taskObj};
+    taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
     // filteredArray[taskIndex] = {...filteredArray[taskIndex], ...taskObj};
     isEditing = false;
     inputFormHeaderIsEditingToggle(false);
     cancelEditBtnToggle(true);
   } else {
-    filteredArray.unshift(taskObj);
+    taskArray.unshift(taskObj);
     // filteredArray.push(taskObj);
   }
   render();
@@ -237,24 +237,27 @@ taskItemContainer.addEventListener('click', e => {
   if (!taskLi) return;
   const index = taskLi.dataset.index;
   const task = filteredArray[index];
+  const originalIndex = taskArray.indexOf(task);
+  const originalTask = taskArray[originalIndex];
+  if (originalIndex === -1) return;
 
   if (e.target.classList.contains('task-done')) {
-    task.done = !task.done;
+    originalTask.done = !originalTask.done;
     render();
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
     isEditing = true;
-    taskIndex = index;
+    taskIndex = originalIndex;
     inputFormHeaderIsEditingToggle(true);
 
-    form.title.value = filteredArray[index].title;
-    form.subject.value = filteredArray[index].subject;
-    form.due.value = filteredArray[index].due;
-    form.details.value = filteredArray[index].details;
+    form.title.value = originalTask.title;
+    form.subject.value = originalTask.subject;
+    form.due.value = originalTask.due;
+    form.details.value = originalTask.details;
 
     cancelEditBtnToggle(false);
   } else if (taskLi) {
-    displayTaskDetailsPopUp(task);
+    displayTaskDetailsPopUp(originalTask);
     overlayToggle();
   }
 });
