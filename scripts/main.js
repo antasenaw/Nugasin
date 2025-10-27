@@ -26,18 +26,21 @@ const overlay = document.querySelector('.overlay');
 
 const taskArray = [
   {
+    id: createId(),
     details: "Ketik di LibreOffice dan makan dengan sapi",
     due: "2025-10-20T23:59",
     subject: "PBO",
     title: "Tugas 3"
   },
   {
+    id: createId(),
     details: "Ketik di LibreOffice dan makan dengan kambing",
     due: "2025-10-27T23:59",
     subject: "Kalkulus",
     title: "Tugas 2"
   },
   {
+    id: createId(),
     details: "Tulis di kertas selembar dan makan dengan hayam",
     due: "2025-10-30T23:59",
     subject: "Aljabar",
@@ -105,6 +108,10 @@ function getDataFromForm() {
   return taskObj;
 }
 
+function createId() {
+  return Date.now() + Math.floor(Math.random() * 1000);
+}
+
 //VIEW
 
 function formatDate(dateString) {
@@ -137,7 +144,7 @@ function displayArray() {
   let taskItemHTML = '';
   filteredArray.forEach((task, i) => {
     taskItemHTML += `
-      <li class="task-item general-style" data-index="${i}">
+      <li class="task-item general-style" data-id="${task.id}">
         <div class="task-item-info">
           <h3>${task.title} - <em>${getTaskStatus(task)}</em></h3>
           <p>${task.subject} - Deadline:  ${formatDate(task.due)}</p>
@@ -208,21 +215,18 @@ function render() {
 
 form.addEventListener('submit', e => {
   e.preventDefault();
-  const taskObj = getDataFromForm();
+  const taskObj = {id: createId(), ...getDataFromForm()};
   
   if (isEditing) {
     taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
-    // filteredArray[taskIndex] = {...filteredArray[taskIndex], ...taskObj};
     isEditing = false;
     inputFormHeaderIsEditingToggle(false);
     cancelEditBtnToggle(true);
   } else {
     taskArray.unshift(taskObj);
-    // filteredArray.push(taskObj);
   }
   render();
-  console.log(taskArray);
-  // form.reset();
+  form.reset();
 });
 
 cancelEditBtn.addEventListener('click', e => {
@@ -235,29 +239,27 @@ cancelEditBtn.addEventListener('click', e => {
 taskItemContainer.addEventListener('click', e => {
   const taskLi = e.target.closest('li'); 
   if (!taskLi) return;
-  const index = taskLi.dataset.index;
-  const task = filteredArray[index];
-  const originalIndex = taskArray.indexOf(task);
-  const originalTask = taskArray[originalIndex];
-  if (originalIndex === -1) return;
+  const id = Number(taskLi.dataset.id);
+  const index = taskArray.findIndex(t => t.id === id);
+  const task = taskArray[index];
 
   if (e.target.classList.contains('task-done')) {
-    originalTask.done = !originalTask.done;
+    task.done = !task.done;
     render();
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
     isEditing = true;
-    taskIndex = originalIndex;
+    taskIndex = index;
     inputFormHeaderIsEditingToggle(true);
 
-    form.title.value = originalTask.title;
-    form.subject.value = originalTask.subject;
-    form.due.value = originalTask.due;
-    form.details.value = originalTask.details;
+    form.title.value = task.title;
+    form.subject.value = task.subject;
+    form.due.value = task.due;
+    form.details.value = task.details;
 
     cancelEditBtnToggle(false);
   } else if (taskLi) {
-    displayTaskDetailsPopUp(originalTask);
+    displayTaskDetailsPopUp(task);
     overlayToggle();
   }
 });
@@ -281,7 +283,6 @@ filterBtnArr.forEach(btn => {
     filterState = btn.dataset.filter;
     mainFilterBtn.innerHTML = `Filter: ${btn.innerHTML}`;
     render();
-    console.log(filteredArray);
     filterBtnArr.forEach(btn => {
       filterBtnsToggle(btn, true);
     });
@@ -292,3 +293,5 @@ filterBtnArr.forEach(btn => {
 //MAIN
 
 render();
+
+// console.log(taskArray);
