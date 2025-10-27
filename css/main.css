@@ -79,6 +79,10 @@ textarea {
   padding: 1rem;
   border-radius: 1.5rem;
   text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .dash-acc {
@@ -300,5 +304,18 @@ textarea {
 
   .detail-popup {
     max-width: 80%;
+  }
+
+  .task-list-header{
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .task-list-header div{
+    flex-direction: column;
+  }
+
+  .task-list-header button {
+    padding: .25rem 1rem;
   }
 }

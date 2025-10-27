@@ -48,25 +48,13 @@ const taskArray = [
   }
 ];
 
-let filteredArray;
-
-function updateFilteredArray() {
+function getFilteredArray() {
   switch (filterState) {
-  case 'done':
-    filteredArray = taskArray.filter(t => t.done);
-    break;
-  case 'past-due':
-    filteredArray = taskArray.filter(t => t.pastDue && !t.done);
-    break;
-  case 'near-due':
-    filteredArray = taskArray.filter(t => t.nearDue && !t.pastDue && !t.done);
-    break;
-  case 'undone':
-    filteredArray = taskArray.filter(t => !t.done);
-    break;
-  default:
-    filteredArray = taskArray;
-    break;
+  case 'done': return taskArray.filter(t => t.done);
+  case 'past-due': return taskArray.filter(t => t.pastDue && !t.done);
+  case 'near-due': return taskArray.filter(t => t.nearDue && !t.pastDue && !t.done);
+  case 'undone': return taskArray.filter(t => !t.done);
+  default: return taskArray;
   }
 }
 
@@ -141,6 +129,7 @@ function getTaskStatus(task) {
 }
 
 function displayArray() {
+  const filteredArray = getFilteredArray();
   let taskItemHTML = '';
   filteredArray.forEach((task, i) => {
     taskItemHTML += `
@@ -206,16 +195,16 @@ function filterBtnsToggle(btn, state) {
 
 function render() {
   updateTaskStatuses();
-  updateFilteredArray();
   displayArray();
   displayCounters();
+  console.log(taskArray);
 }
 
 //CONTROLLER
 
 form.addEventListener('submit', e => {
   e.preventDefault();
-  const taskObj = {id: createId(), ...getDataFromForm()};
+  const taskObj = isEditing ? {...getDataFromForm()} : {id: createId(), ...getDataFromForm()};
   
   if (isEditing) {
     taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
@@ -293,5 +282,3 @@ filterBtnArr.forEach(btn => {
 //MAIN
 
 render();
-
-// console.log(taskArray);
