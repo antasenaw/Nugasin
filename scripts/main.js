@@ -2,6 +2,7 @@
 
 let isEditing = false;
 let taskIndex;
+let filterState = 'all';
 
 const mainFilterBtn = document.querySelector('.main-filter-btn');
 const filterBtnArr = document.querySelectorAll('.filter-btn');
@@ -25,24 +26,46 @@ const overlay = document.querySelector('.overlay');
 
 const taskArray = [
   {
-    details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-10-30T23:59",
-    subject: "Aljabar",
-    title: "Tugas 2"
-  },
-  {
-    details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-25T23:59",
-    subject: "Kalkulus",
-    title: "Tugas 3"
-  },
-  {
     details: "Ketik di LibreOffice dan makan dengan sapi",
     due: "2025-10-20T23:59",
     subject: "PBO",
+    title: "Tugas 3"
+  },
+  {
+    details: "Ketik di LibreOffice dan makan dengan kambing",
+    due: "2025-10-27T23:59",
+    subject: "Kalkulus",
+    title: "Tugas 2"
+  },
+  {
+    details: "Tulis di kertas selembar dan makan dengan hayam",
+    due: "2025-10-30T23:59",
+    subject: "Aljabar",
     title: "Tugas 1"
   }
 ];
+
+let filteredArray;
+
+function updateFilteredArray() {
+  switch (filterState) {
+  case 'done':
+    filteredArray = taskArray.filter(t => t.done);
+    break;
+  case 'past-due':
+    filteredArray = taskArray.filter(t => t.pastDue && !t.done);
+    break;
+  case 'near-due':
+    filteredArray = taskArray.filter(t => t.nearDue && !t.pastDue && !t.done);
+    break;
+  case 'undone':
+    filteredArray = taskArray.filter(t => !t.done);
+    break;
+  default:
+    filteredArray = taskArray;
+    break;
+  }
+}
 
 function calculateTaskCount() {
   const now = new Date();
@@ -71,7 +94,6 @@ function updateTaskStatuses() {
     const due = new Date(task.due);
     const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
 
-    // Reset and recalculate
     task.pastDue = diffDays <= 0 && !task.done;
     task.nearDue = diffDays <= 2 && !task.done;
   });
@@ -80,11 +102,6 @@ function updateTaskStatuses() {
 function getDataFromForm() {
   const taskData = new FormData(form);
   const taskObj = Object.fromEntries(taskData.entries());
-  if (!isEditing) {
-    taskObj.done = false;
-    taskObj.nearDue = false;
-    taskObj.pastDue = false;
-  }
   return taskObj;
 }
 
@@ -118,12 +135,12 @@ function getTaskStatus(task) {
 
 function displayArray() {
   let taskItemHTML = '';
-  taskArray.forEach((task, i) => {
+  filteredArray.forEach((task, i) => {
     taskItemHTML += `
       <li class="task-item general-style" data-index="${i}">
         <div class="task-item-info">
-          <h3>${task.title}</h3>
-          <p>${task.subject} - Deadline:  ${formatDate(task.due)} - ${getTaskStatus(task)}</p>
+          <h3>${task.title} - <em>${getTaskStatus(task)}</em></h3>
+          <p>${task.subject} - Deadline:  ${formatDate(task.due)}</p>
         </div>
         <div class="task-item-button">
           <button class="task-edit general-style">Edit</button>
@@ -147,12 +164,12 @@ function displayTaskDetailsPopUp(task) {
   overlay.innerHTML = `
     <div class="detail-popup general-style">
       <div class="detail-header">
-        <h2>${task.title}</h2><button class="popup-close-btn general-style">Tutup</button>
+        <h2>${task.title} - <em>${getTaskStatus(task)}</em></h2>
+        <button class="popup-close-btn general-style">Tutup</button>
       </div>
       <div class="detail-info">
         <p>Subjek: ${task.subject}</p>
         <p>Deadline: ${formatDate(task.due)}</p>
-        <p>Status: ${getTaskStatus(task)}</p>
       </div>
       <div class="detail-desc">
         <p>Detail: </p>
@@ -182,6 +199,7 @@ function filterBtnsToggle(btn, state) {
 
 function render() {
   updateTaskStatuses();
+  updateFilteredArray();
   displayArray();
   displayCounters();
 }
@@ -193,15 +211,18 @@ form.addEventListener('submit', e => {
   const taskObj = getDataFromForm();
   
   if (isEditing) {
-    taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
+    filteredArray[taskIndex] = {...filteredArray[taskIndex], ...taskObj};
+    // filteredArray[taskIndex] = {...filteredArray[taskIndex], ...taskObj};
     isEditing = false;
     inputFormHeaderIsEditingToggle(false);
     cancelEditBtnToggle(true);
   } else {
-    taskArray.push(taskObj);
+    filteredArray.unshift(taskObj);
+    // filteredArray.push(taskObj);
   }
   render();
-  form.reset();
+  console.log(taskArray);
+  // form.reset();
 });
 
 cancelEditBtn.addEventListener('click', e => {
@@ -215,7 +236,7 @@ taskItemContainer.addEventListener('click', e => {
   const taskLi = e.target.closest('li'); 
   if (!taskLi) return;
   const index = taskLi.dataset.index;
-  const task = taskArray[index];
+  const task = filteredArray[index];
 
   if (e.target.classList.contains('task-done')) {
     task.done = !task.done;
@@ -226,10 +247,10 @@ taskItemContainer.addEventListener('click', e => {
     taskIndex = index;
     inputFormHeaderIsEditingToggle(true);
 
-    form.title.value = taskArray[index].title;
-    form.subject.value = taskArray[index].subject;
-    form.due.value = taskArray[index].due;
-    form.details.value = taskArray[index].details;
+    form.title.value = filteredArray[index].title;
+    form.subject.value = filteredArray[index].subject;
+    form.due.value = filteredArray[index].due;
+    form.details.value = filteredArray[index].details;
 
     cancelEditBtnToggle(false);
   } else if (taskLi) {
@@ -254,7 +275,10 @@ mainFilterBtn.addEventListener('click', () => {
 
 filterBtnArr.forEach(btn => {
   btn.addEventListener('click', () => {
-    mainFilterBtn.innerHTML = `Filter: ${btn.dataset.filter}`;
+    filterState = btn.dataset.filter;
+    mainFilterBtn.innerHTML = `Filter: ${btn.innerHTML}`;
+    render();
+    console.log(filteredArray);
     filterBtnArr.forEach(btn => {
       filterBtnsToggle(btn, true);
     });
