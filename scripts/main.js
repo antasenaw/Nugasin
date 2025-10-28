@@ -144,6 +144,7 @@ function displayArray() {
         <div class="task-item-button">
           <button class="task-edit general-style">Edit</button>
           <button class="task-done general-style">${task.done ? 'Batal' : 'Tandai selesai'}</button>
+          <button class="task-delete">×</button>
         </div>
       </li>
     `
@@ -252,7 +253,10 @@ taskItemContainer.addEventListener('click', e => {
     form.details.value = task.details;
 
     cancelEditBtnToggle(false);
-  } else if (taskLi) {
+  } else if (e.target.classList.contains('task-delete')) {
+    taskArray.splice(index, 1);
+    render();
+  } else if(taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
   }
