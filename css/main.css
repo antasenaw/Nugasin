@@ -101,7 +101,7 @@ textarea {
 
 .task-board{
   /* border: solid 1px blue; */
-  flex: 1 1 0;
+  flex: 0 1 0;
 
   display: flex;
   gap: 2rem;
@@ -133,11 +133,16 @@ textarea {
   padding: 1.5rem;
   padding-bottom: 1.5rem;
   border-radius: 1rem;
+  
+  display: flex;
+  flex-direction: column;
 }
 
 .task-list-header {
   display: flex;
   justify-content: space-between;
+
+  flex: 0 0 auto;
 }
 
 .task-list-header div {
@@ -152,17 +157,21 @@ textarea {
 .task-item-container {
   margin-top: 1.5rem;
   border-radius: 1rem;
-  padding-bottom: 0rem;
+  padding-bottom: 0.33rem;
 
   display: flex;
   flex-direction: column;
   gap: 2rem;
 
-  max-height: 54.25vh;
+  /* max-height: 54.25vh;
+  min-height: 42vh; */
 
-  min-height: 42vh;
+  flex: 1 1 0;
+  min-height: 0;
 
-  overflow-y: scroll;
+  overflow-y: auto;
+
+  max-height: none;
 }
 
 .task-item {
@@ -173,6 +182,8 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  /* display: none; */
 }
 
 .task-item-info, .task-item-button {
@@ -327,4 +338,7 @@ textarea {
     padding: .25rem 1rem;
   }
 
+  .task-item-container{
+    min-height: 67vh;
+  }
 }

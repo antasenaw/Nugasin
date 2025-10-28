@@ -59,6 +59,20 @@ const taskArray = [
     due: "2025-10-30T23:59",
     subject: "Aljabar",
     title: "Tugas 1"
+  },
+  {
+    id: createId(),
+    details: "Tulis di kertas selembar dan makan dengan hayam",
+    due: "2025-10-30T23:59",
+    subject: "Aljabar",
+    title: "Tugas 1"
+  },
+  {
+    id: createId(),
+    details: "Tulis di kertas selembar dan makan dengan hayam",
+    due: "2025-10-30T23:59",
+    subject: "Aljabar",
+    title: "Tugas 1"
   }
 ];
 
