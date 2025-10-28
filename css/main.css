@@ -59,14 +59,21 @@ textarea {
   /* border: solid 1px black; */
 
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   gap: 2rem;
+  flex-direction: column;
   /* border: solid 1px white; */
+}
+
+.dash-row {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
 .dash-column {
   display: flex;
-  flex-direction: column;
+  /* flex-direction: column; */
   /* flex-wrap: wrap; */
   gap: 2rem;
   
@@ -86,7 +93,7 @@ textarea {
 }
 
 .dash-acc {
-  flex: 2 1 0;
+  flex: 0 1 0;
   padding: 1rem;
   border-radius: 1.5rem;
   /* border: solid 1px white; */
@@ -288,7 +295,8 @@ textarea {
   .main-container,
   .dash-board,
   .dash-column,
-  .task-board {
+  .task-board,
+  .dash-row {
     gap: 1rem;
   }
 
@@ -318,4 +326,5 @@ textarea {
   .task-list-header button {
     padding: .25rem 1rem;
   }
+
 }

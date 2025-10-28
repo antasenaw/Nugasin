@@ -35,9 +35,23 @@ const taskArray = [
   {
     id: createId(),
     details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-27T23:59",
+    due: "2025-10-28T23:59",
     subject: "Kalkulus",
     title: "Tugas 2"
+  },
+  {
+    id: createId(),
+    details: "Tulis di kertas selembar dan makan dengan hayam",
+    due: "2025-10-30T23:59",
+    subject: "Aljabar",
+    title: "Tugas 1"
+  },
+  {
+    id: createId(),
+    details: "Tulis di kertas selembar dan makan dengan hayam",
+    due: "2025-10-30T23:59",
+    subject: "Aljabar",
+    title: "Tugas 1"
   },
   {
     id: createId(),
@@ -152,6 +166,7 @@ function displayCounters() {
   const counters = calculateTaskCount();
   totalTaskElement.innerHTML = counters.total;
   doneTaskElement.innerHTML = counters.done;
+  doneTaskElement.previousElementSibling.innerHTML = `Selesai (${Math.round(counters.done/taskArray.length * 100)}%)`;
   nearDueTaskElement.innerHTML = counters.nearDue;
   pastDueTaskElement.innerHTML = counters.pastDue;
 }
