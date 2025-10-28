@@ -236,7 +236,7 @@ textarea {
 
 .detail-popup {
   /* background-color: aqua; */
-  max-width: 50%;
+  max-width: 75%;
   /* min-height: 75%; */
   padding: 1rem;
   border-radius: 1rem;
@@ -261,12 +261,21 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin: 1rem;
 }
 
 .delete-popup div {
   display: flex;
   justify-content: center;
   gap: 1rem;
+}
+
+.task-btns *{
+  margin-left: 1rem;
+}
+
+.task-btns-handler {
+  padding: .5rem;
 }
 
 /* .detail-info {

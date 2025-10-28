@@ -142,9 +142,12 @@ function displayArray() {
           <p>${task.subject} - Deadline:  ${formatDate(task.due)}</p>
         </div>
         <div class="task-item-button">
-          <button class="task-edit button-general general-style">Edit</button>
-          <button class="task-done general-style button-general">${task.done ? 'Batal' : 'Tandai selesai'}</button>
-          <button class="task-delete">×</button>
+          <button class="task-btns-handler-${task.id} task-btns-handler general-style">⋮</button>
+          <div class="task-btns-${task.id} task-item-button hidden">
+            <button class="task-delete button-general general-style">Hapus</button>
+            <button class="task-edit button-general general-style">Edit</button>
+            <button class="task-done general-style button-general">${task.done ? 'Batal' : 'Tandai selesai'}</button>
+          </div>
         </div>
       </li>
     `
@@ -269,6 +272,9 @@ taskItemContainer.addEventListener('click', e => {
     taskIndex = index;
     displayDeleteConfirmationPopUp(task);
     overlayToggle();
+  } else if (e.target.classList.contains('task-btns-handler')) {
+    document.querySelector(`.task-btns-${id}`).classList.toggle('hidden');
+    document.querySelector(`.task-btns-handler-${id}`).classList.toggle('hidden');
   } else if(taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
