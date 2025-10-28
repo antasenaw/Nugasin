@@ -142,8 +142,8 @@ function displayArray() {
           <p>${task.subject} - Deadline:  ${formatDate(task.due)}</p>
         </div>
         <div class="task-item-button">
-          <button class="task-edit general-style">Edit</button>
-          <button class="task-done general-style">${task.done ? 'Batal' : 'Tandai selesai'}</button>
+          <button class="task-edit button-general general-style">Edit</button>
+          <button class="task-done general-style button-general">${task.done ? 'Batal' : 'Tandai selesai'}</button>
           <button class="task-delete">×</button>
         </div>
       </li>
@@ -176,6 +176,18 @@ function displayTaskDetailsPopUp(task) {
       <div class="detail-desc">
         <p>Detail: </p>
         <p>${task.details}</p>
+      </div>
+    </div>
+  `
+}
+
+function displayDeleteConfirmationPopUp(task) {
+  overlay.innerHTML = `
+    <div class="delete-popup general-style">
+      <h2>Apa anda yakin ingin menghapus ${task.title}?</h2>
+      <div>
+        <button class="conf-delete-btn general-style button-general">Ya</button>
+        <button class="cancel-delete-btn general-style button-general">Tidak</button>
       </div>
     </div>
   `
@@ -254,8 +266,9 @@ taskItemContainer.addEventListener('click', e => {
 
     cancelEditBtnToggle(false);
   } else if (e.target.classList.contains('task-delete')) {
-    taskArray.splice(index, 1);
-    render();
+    taskIndex = index;
+    displayDeleteConfirmationPopUp(task);
+    overlayToggle();
   } else if(taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
@@ -263,7 +276,12 @@ taskItemContainer.addEventListener('click', e => {
 });
 
 overlay.addEventListener('click',  e => {
-  if (e.target.classList.contains('popup-close-btn') || e.target === overlay) {
+  if (e.target.classList.contains('conf-delete-btn')) {
+    taskArray.splice(taskIndex, 1);
+    render();
+    overlay.innerHTML = '';
+    overlayToggle();
+  } else if (e.target.classList.contains('popup-close-btn') || e.target.classList.contains('cancel-delete-btn') || e.target === overlay) {
     overlay.innerHTML = '';
     overlayToggle();
   }
