@@ -45,34 +45,6 @@ const taskArray = [
     due: "2025-10-30T23:59",
     subject: "Aljabar",
     title: "Tugas 1"
-  },
-  {
-    id: createId(),
-    details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-10-30T23:59",
-    subject: "Aljabar",
-    title: "Tugas 1"
-  },
-  {
-    id: createId(),
-    details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-10-30T23:59",
-    subject: "Aljabar",
-    title: "Tugas 1"
-  },
-  {
-    id: createId(),
-    details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-10-30T23:59",
-    subject: "Aljabar",
-    title: "Tugas 1"
-  },
-  {
-    id: createId(),
-    details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-10-30T23:59",
-    subject: "Aljabar",
-    title: "Tugas 1"
   }
 ];
 
@@ -159,7 +131,10 @@ function getTaskStatus(task) {
 function displayArray() {
   const filteredArray = getFilteredArray();
   let taskItemHTML = '';
-  filteredArray.forEach((task, i) => {
+  if (filteredArray.length === 0) {
+    taskItemHTML = '<p style="text-align: center;">Sepertinya tidak ada apa-apa disini<p>';
+  } else {
+    filteredArray.forEach((task) => {
     taskItemHTML += `
       <li class="task-item general-style" data-id="${task.id}">
         <div class="task-item-info">
@@ -172,7 +147,8 @@ function displayArray() {
         </div>
       </li>
     `
-  });
+    });
+  }
   taskItemContainer.innerHTML = taskItemHTML;
 }
 
