@@ -35,14 +35,14 @@ const taskArray = [
   {
     id: createId(),
     details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-28T23:59",
+    due: "2025-10-29T23:59",
     subject: "Kalkulus",
     title: "Tugas 2"
   },
   {
     id: createId(),
     details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-10-30T23:59",
+    due: "2025-11-05T23:59",
     subject: "Aljabar",
     title: "Tugas 1"
   }
@@ -143,7 +143,7 @@ function displayArray() {
         </div>
         <div class="task-item-button">
           <button class="task-btns-handler-${task.id} task-btns-handler general-style">⋮</button>
-          <div class="task-btns-${task.id} task-item-button hidden">
+          <div class="task-btns-${task.id} task-btns hidden">
             <button class="task-delete button-general general-style">Hapus</button>
             <button class="task-edit button-general general-style">Edit</button>
             <button class="task-done general-style button-general">${task.done ? 'Batal' : 'Tandai selesai'}</button>
@@ -214,7 +214,15 @@ function filterBtnsToggle(btn, state) {
   btn.classList.toggle('hidden', state);
 }
 
+function cancelEdit() {
+  isEditing = false;
+  inputFormHeaderIsEditingToggle(false);
+  cancelEditBtnToggle(true);
+  form.reset();
+}
+
 function render() {
+  form.reset();
   updateTaskStatuses();
   displayArray();
   displayCounters();
@@ -229,9 +237,7 @@ form.addEventListener('submit', e => {
   
   if (isEditing) {
     taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
-    isEditing = false;
-    inputFormHeaderIsEditingToggle(false);
-    cancelEditBtnToggle(true);
+    cancelEdit();
   } else {
     taskArray.unshift(taskObj);
   }
@@ -240,11 +246,18 @@ form.addEventListener('submit', e => {
 });
 
 cancelEditBtn.addEventListener('click', e => {
-    isEditing = false;
-    inputFormHeaderIsEditingToggle(false);
-    cancelEditBtnToggle(true);
-    form.reset();
+  cancelEdit();
 });
+
+function taskButtonsHandler (id, taskBtnsHidden, taskBtnsHandlerHidden) {
+    document.querySelector(`.task-btns-${id}`).classList.toggle('hidden', taskBtnsHidden);
+    document.querySelector(`.task-btns-handler-${id}`).classList.toggle('hidden', taskBtnsHandlerHidden);
+}
+
+function toggleGlobalTaskButtons() {
+  document.querySelectorAll(`.task-btns`).forEach(btn => btn.classList.toggle('hidden', true));
+  document.querySelectorAll(`.task-btns-handler`).forEach(handler => handler.classList.toggle('hidden', false));
+}
 
 taskItemContainer.addEventListener('click', e => {
   const taskLi = e.target.closest('li'); 
@@ -255,6 +268,7 @@ taskItemContainer.addEventListener('click', e => {
 
   if (e.target.classList.contains('task-done')) {
     task.done = !task.done;
+    cancelEdit();
     render();
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
@@ -268,13 +282,16 @@ taskItemContainer.addEventListener('click', e => {
     form.details.value = task.details;
 
     cancelEditBtnToggle(false);
+    taskButtonsHandler(id, true, false);
   } else if (e.target.classList.contains('task-delete')) {
     taskIndex = index;
     displayDeleteConfirmationPopUp(task);
     overlayToggle();
-  } else if (e.target.classList.contains('task-btns-handler')) {
-    document.querySelector(`.task-btns-${id}`).classList.toggle('hidden');
-    document.querySelector(`.task-btns-handler-${id}`).classList.toggle('hidden');
+    taskButtonsHandler(id, true, false);
+    cancelEdit();
+  } else if (e.target.classList.contains(`task-btns-handler-${id}`)) {
+    toggleGlobalTaskButtons();
+    taskButtonsHandler(id, false, true);
   } else if(taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();
@@ -297,13 +314,14 @@ mainFilterBtn.addEventListener('click', () => {
   filterBtnsToggle(mainFilterBtn, true);
   filterBtnArr.forEach(btn => {
     filterBtnsToggle(btn, false);
-  })
+  });
 });
 
 filterBtnArr.forEach(btn => {
   btn.addEventListener('click', () => {
     filterState = btn.dataset.filter;
     mainFilterBtn.innerHTML = `Filter: ${btn.innerHTML}`;
+    cancelEdit();
     render();
     filterBtnArr.forEach(btn => {
       filterBtnsToggle(btn, true);
@@ -311,6 +329,18 @@ filterBtnArr.forEach(btn => {
     filterBtnsToggle(mainFilterBtn, false);
   });
 })
+
+document.addEventListener('click', e => {
+  if (!e.target.classList.contains('task-btns-handler')) {
+    toggleGlobalTaskButtons();
+  } 
+  if (e.target !== mainFilterBtn) {
+    filterBtnArr.forEach(btn => {
+      filterBtnsToggle(btn, true);
+    });
+    filterBtnsToggle(mainFilterBtn, false);
+  }
+});
 
 //MAIN
 
