@@ -1,0 +1,27 @@
+{
+  "name": "todolist---tugas-(vanilla)",
+  "version": "1.0.0",
+  "description": "A simple to-do assignment list web app that helps students organize and track their assignments. Built with vanilla HTML, CSS, and JavaScript, featuring task creation, due date tracking and completion history.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antasenaw/Nugasin.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/antasenaw/Nugasin/issues"
+  },
+  "homepage": "https://github.com/antasenaw/Nugasin#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}

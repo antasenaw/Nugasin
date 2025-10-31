@@ -23,7 +23,6 @@ const overlay = document.querySelector('.overlay');
 
 
 //MODEL
-
 const taskArray = [
   {
     id: createId(),
