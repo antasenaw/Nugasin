@@ -34,11 +34,11 @@ async function getTaskFromBackend() {
   });
 };
 
-async function updateTaskOnBackend(taskObj) {
+async function updateTaskOnBackend() {
   const res = await fetch('/api/task', {
     method: 'POST',
     headers: {'Content-Type' : 'application/json'},
-    body: JSON.stringify(taskObj)
+    body: JSON.stringify(taskArray)
   });
 }
 
@@ -217,12 +217,10 @@ function cancelEdit() {
 
 async function render() {
   await getTaskFromBackend();
-
   form.reset();
   updateTaskStatuses();
   displayArray();
   displayCounters();
-  // console.log(taskArray);
 }
 
 //CONTROLLER
@@ -236,8 +234,8 @@ form.addEventListener('submit', async e => {
     cancelEdit();
   } else {
     taskArray.unshift(taskObj);
-    // await addTaskOnBackend(taskObj);
   }
+  await updateTaskOnBackend();
   render();
   form.reset();
 });
@@ -258,7 +256,7 @@ function toggleGlobalTaskButtons() {
   document.querySelectorAll(`.task-btns-handler`).forEach(handler => handler.classList.toggle('hidden', false));
 }
 
-taskItemContainer.addEventListener('click', e => {
+taskItemContainer.addEventListener('click', async e => {
   const taskLi = e.target.closest('li'); 
   if (!taskLi) return;
   const id = Number(taskLi.dataset.id);
@@ -268,11 +266,12 @@ taskItemContainer.addEventListener('click', e => {
   if (e.target.classList.contains('task-done')) {
     task.done = !task.done;
     cancelEdit();
+    await updateTaskOnBackend();
     render();
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
     isEditing = true;
-    taskIndex = index;name
+    taskIndex = index;
     inputFormHeaderIsEditingToggle(true);
 
     form.title.value = task.title;
@@ -297,9 +296,10 @@ taskItemContainer.addEventListener('click', e => {
   }
 });
 
-overlay.addEventListener('click',  e => {
+overlay.addEventListener('click', async e => {
   if (e.target.classList.contains('conf-delete-btn')) {
     taskArray.splice(taskIndex, 1);
+    await updateTaskOnBackend();
     render();
     overlay.innerHTML = '';
     overlayToggle();
@@ -317,10 +317,11 @@ mainFilterBtn.addEventListener('click', () => {
 });
 
 filterBtnArr.forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     filterState = btn.dataset.filter;
     mainFilterBtn.innerHTML = `Filter: ${btn.innerHTML}`;
     cancelEdit();
+    await updateTaskOnBackend();
     render();
     filterBtnArr.forEach(btn => {
       filterBtnsToggle(btn, true);

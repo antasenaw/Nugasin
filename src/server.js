@@ -5,7 +5,7 @@ const port = 3000;
 app.use(express.json());
 app.use(express.static('public'));
 
-taskArray = [
+let taskArray = [
   {
     id: 3,
     details: "Ketik di LibreOffice dan makan dengan sapi",
@@ -16,7 +16,7 @@ taskArray = [
   {
     id: 2,
     details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-31T23:59",
+    due: "2025-11-01T23:59",
     subject: "Kalkulus",
     title: "Tugas 2"
   },
@@ -31,10 +31,13 @@ taskArray = [
 
 app.get('/api/task', (req, res) => {
   res.json(taskArray);
+  console.log(taskArray);
 });
 
 app.post('/api/task', (req, res) => {
-  // taskArray.unshift(req.body);
+  let body = req.body;
+  taskArray = body;
+  res.sendStatus(200);
 })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
