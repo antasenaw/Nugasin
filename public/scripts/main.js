@@ -23,29 +23,24 @@ const overlay = document.querySelector('.overlay');
 
 
 //MODEL
-const taskArray = [
-  {
-    id: createId(),
-    details: "Ketik di LibreOffice dan makan dengan sapi",
-    due: "2025-10-20T23:59",
-    subject: "PBO",
-    title: "Tugas 3"
-  },
-  {
-    id: createId(),
-    details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-31T23:59",
-    subject: "Kalkulus",
-    title: "Tugas 2"
-  },
-  {
-    id: createId(),
-    details: "Tulis di kertas selembar dan makan dengan hayam",
-    due: "2025-11-05T23:59",
-    subject: "Aljabar",
-    title: "Tugas 1"
-  }
-];
+const taskArray = [];
+
+async function getTaskFromBackend() {
+  const res = await fetch('/api/task');
+  const task = await res.json();
+  taskArray.length = 0;
+  task.forEach(t => {
+    taskArray.push(t);
+  });
+};
+
+async function updateTaskOnBackend(taskObj) {
+  const res = await fetch('/api/task', {
+    method: 'POST',
+    headers: {'Content-Type' : 'application/json'},
+    body: JSON.stringify(taskObj)
+  });
+}
 
 function getFilteredArray() {
   switch (filterState) {
@@ -220,7 +215,9 @@ function cancelEdit() {
   form.reset();
 }
 
-function render() {
+async function render() {
+  await getTaskFromBackend();
+
   form.reset();
   updateTaskStatuses();
   displayArray();
@@ -230,7 +227,7 @@ function render() {
 
 //CONTROLLER
 
-form.addEventListener('submit', e => {
+form.addEventListener('submit', async e => {
   e.preventDefault();
   const taskObj = isEditing ? {...getDataFromForm()} : {id: createId(), ...getDataFromForm()};
   
@@ -239,6 +236,7 @@ form.addEventListener('submit', e => {
     cancelEdit();
   } else {
     taskArray.unshift(taskObj);
+    // await addTaskOnBackend(taskObj);
   }
   render();
   form.reset();
@@ -274,7 +272,7 @@ taskItemContainer.addEventListener('click', e => {
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
     isEditing = true;
-    taskIndex = index;
+    taskIndex = index;name
     inputFormHeaderIsEditingToggle(true);
 
     form.title.value = task.title;
