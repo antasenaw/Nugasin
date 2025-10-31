@@ -35,7 +35,7 @@ const taskArray = [
   {
     id: createId(),
     details: "Ketik di LibreOffice dan makan dengan kambing",
-    due: "2025-10-29T23:59",
+    due: "2025-10-31T23:59",
     subject: "Kalkulus",
     title: "Tugas 2"
   },
@@ -226,7 +226,7 @@ function render() {
   updateTaskStatuses();
   displayArray();
   displayCounters();
-  console.log(taskArray);
+  // console.log(taskArray);
 }
 
 //CONTROLLER
@@ -249,13 +249,15 @@ cancelEditBtn.addEventListener('click', e => {
   cancelEdit();
 });
 
-function taskButtonsHandler (id, taskBtnsHidden, taskBtnsHandlerHidden) {
+function toggleTaskButtons (id, taskBtnsHidden, taskBtnsHandlerHidden) {
     document.querySelector(`.task-btns-${id}`).classList.toggle('hidden', taskBtnsHidden);
+    document.querySelector(`.task-btns-${id}`).classList.toggle('task-btns-flex', !taskBtnsHidden);
     document.querySelector(`.task-btns-handler-${id}`).classList.toggle('hidden', taskBtnsHandlerHidden);
 }
 
 function toggleGlobalTaskButtons() {
   document.querySelectorAll(`.task-btns`).forEach(btn => btn.classList.toggle('hidden', true));
+  document.querySelectorAll(`.task-btns`).forEach(btn => btn.classList.toggle('task-btns-flex', false));
   document.querySelectorAll(`.task-btns-handler`).forEach(handler => handler.classList.toggle('hidden', false));
 }
 
@@ -282,16 +284,16 @@ taskItemContainer.addEventListener('click', e => {
     form.details.value = task.details;
 
     cancelEditBtnToggle(false);
-    taskButtonsHandler(id, true, false);
+    toggleTaskButtons(id, true, false);
   } else if (e.target.classList.contains('task-delete')) {
     taskIndex = index;
     displayDeleteConfirmationPopUp(task);
     overlayToggle();
-    taskButtonsHandler(id, true, false);
+    toggleTaskButtons(id, true, false);
     cancelEdit();
   } else if (e.target.classList.contains(`task-btns-handler-${id}`)) {
     toggleGlobalTaskButtons();
-    taskButtonsHandler(id, false, true);
+    toggleTaskButtons(id, false, true);
   } else if(taskLi) {
     displayTaskDetailsPopUp(task);
     overlayToggle();

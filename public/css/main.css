@@ -137,6 +137,7 @@ textarea {
   
   display: flex;
   flex-direction: column;
+  gap: .5rem;
 }
 
 .task-list-header {
@@ -183,14 +184,14 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: 12rem;
 
   /* display: none; */
 }
 
 .task-item-info, .task-item-button {
   display: flex;
-  gap: 1rem;
+  gap: .5rem;
 }
 
 .task-item-info {
@@ -270,8 +271,13 @@ textarea {
   gap: 1rem;
 }
 
-.task-btns *{
+/* .task-btns *{
   margin-left: 1rem;
+} */
+
+.task-btns-flex {
+  display: flex;
+  gap: 1rem;
 }
 
 .task-btns-handler {
@@ -313,7 +319,7 @@ textarea {
   min-height: 100%;
 } */
 
-@media (max-width: 760px) {
+@media (max-width: 960px) {
   /* html, body {
     font-size: 14px;
   } */
@@ -360,5 +366,13 @@ textarea {
 
   .task-item-container{
     min-height: 67vh;
+  }
+
+  .task-btns-flex {
+    flex-wrap: wrap;
+  }
+
+  .task-btns-flex * {
+    flex: 1 1 0;
   }
 }
