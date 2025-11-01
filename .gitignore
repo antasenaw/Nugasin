@@ -13,3 +13,6 @@ Thumbs.db
 # Build folders (if added later)
 node_modules/
 dist/
+
+# Environment Variables
+.env
