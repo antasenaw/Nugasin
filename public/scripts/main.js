@@ -1,7 +1,6 @@
 //DOM REFERENCES AND FLAGS
 
 let taskId;
-let taskIndex;
 let isEditing = false;
 let filterState = 'all';
 
@@ -107,6 +106,11 @@ function getDataFromForm() {
 
 function createId() {
   return Date.now() + Math.floor(Math.random() * 1000);
+}
+
+function getTaskFromId(id) {
+  const task = taskArray.find(t => t.id === id);
+  return task;
 }
 
 //VIEW
@@ -245,11 +249,11 @@ form.addEventListener('submit', async e => {
   const taskObj = isEditing ? {...getDataFromForm()} : {id: createId(), ...getDataFromForm()};
   
   if (isEditing) {
-    taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
-    await editTaskOnBackend(taskArray[taskIndex], taskId);
+    let task = getTaskFromId(taskId);
+    task = {...task, ...taskObj};
+    await editTaskOnBackend(task, taskId);
     cancelEdit();
   } else {
-    // taskArray.unshift(taskObj);
     await addTaskOnBackend(taskObj);
   }
   render();
@@ -272,38 +276,47 @@ function toggleGlobalTaskButtons() {
   document.querySelectorAll(`.task-btns-handler`).forEach(handler => handler.classList.toggle('hidden', false));
 }
 
+async function handleDoneTaskBtn(task, taskId) {
+  task.done = !task.done;
+  await editTaskOnBackend(task, taskId);
+  cancelEdit();
+  render();
+}
+
+function handleEditTaskBtn(task, id) {
+  titleInput.focus();
+  isEditing = true;
+  inputFormHeaderIsEditingToggle(true);
+
+  form.title.value = task.title;
+  form.subject.value = task.subject;
+  form.due.value = task.due;
+  form.details.value = task.details;
+
+  cancelEditBtnToggle(false);
+  toggleTaskButtons(id, true, false);
+}
+
+function handleDeleteTaskBtn(task, id) {
+  displayDeleteConfirmationPopUp(task);
+  overlayToggle();
+  toggleTaskButtons(id, true, false);
+  cancelEdit();
+}
+
 taskItemContainer.addEventListener('click', async e => {
   const taskLi = e.target.closest('li'); 
   if (!taskLi) return;
   const id = Number(taskLi.dataset.id);
   taskId = id;
-  const index = taskArray.findIndex(t => t.id === id);
-  const task = taskArray[index];
+  const task = getTaskFromId(id);
 
   if (e.target.classList.contains('task-done')) {
-    task.done = !task.done;
-    await editTaskOnBackend(task, taskId);
-    cancelEdit();
-    render();
+    await handleDoneTaskBtn(task, id);
   } else if (e.target.classList.contains('task-edit')) {
-    titleInput.focus();
-    isEditing = true;
-    taskIndex = index;
-    inputFormHeaderIsEditingToggle(true);
-
-    form.title.value = task.title;
-    form.subject.value = task.subject;
-    form.due.value = task.due;
-    form.details.value = task.details;
-
-    cancelEditBtnToggle(false);
-    toggleTaskButtons(id, true, false);
+    handleEditTaskBtn(task, id);
   } else if (e.target.classList.contains('task-delete')) {
-    taskIndex = index;
-    displayDeleteConfirmationPopUp(task);
-    overlayToggle();
-    toggleTaskButtons(id, true, false);
-    cancelEdit();
+    handleDeleteTaskBtn(task, id);
   } else if (e.target.classList.contains(`task-btns-handler-${id}`)) {
     toggleGlobalTaskButtons();
     toggleTaskButtons(id, false, true);
@@ -315,7 +328,6 @@ taskItemContainer.addEventListener('click', async e => {
 
 overlay.addEventListener('click', async e => {
   if (e.target.classList.contains('conf-delete-btn')) {
-    taskArray.splice(taskIndex, 1);
     await deleteTaskOnBackend(taskId);
     render();
     overlay.innerHTML = '';
