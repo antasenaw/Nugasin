@@ -1,7 +1,8 @@
 //DOM REFERENCES AND FLAGS
 
-let isEditing = false;
+let taskId;
 let taskIndex;
+let isEditing = false;
 let filterState = 'all';
 
 const mainFilterBtn = document.querySelector('.main-filter-btn');
@@ -34,11 +35,25 @@ async function getTaskFromBackend() {
   });
 };
 
-async function updateTaskOnBackend() {
+async function addTaskOnBackend(taskObj) {
   const res = await fetch('/api/task', {
     method: 'POST',
     headers: {'Content-Type' : 'application/json'},
-    body: JSON.stringify(taskArray)
+    body: JSON.stringify(taskObj)
+  });
+}
+
+async function editTaskOnBackend(task, id) {
+  const res = await fetch(`/api/task/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type' : 'application/json' },
+    body: JSON.stringify(task)
+  });
+}
+
+async function deleteTaskOnBackend(id) {
+  const res = await fetch(`/api/task/${id}`, {
+    method: 'DELETE'
   });
 }
 
@@ -154,7 +169,7 @@ function displayCounters() {
   const counters = calculateTaskCount();
   totalTaskElement.innerHTML = counters.total;
   doneTaskElement.innerHTML = counters.done;
-  doneTaskElement.previousElementSibling.innerHTML = `Selesai (${Math.round(counters.done/taskArray.length * 100)}%)`;
+  doneTaskElement.previousElementSibling.innerHTML = `Selesai (${(Math.round(counters.done/taskArray.length * 100)) || 0}%)`;
   nearDueTaskElement.innerHTML = counters.nearDue;
   pastDueTaskElement.innerHTML = counters.pastDue;
 }
@@ -231,11 +246,12 @@ form.addEventListener('submit', async e => {
   
   if (isEditing) {
     taskArray[taskIndex] = {...taskArray[taskIndex], ...taskObj};
+    await editTaskOnBackend(taskArray[taskIndex], taskId);
     cancelEdit();
   } else {
-    taskArray.unshift(taskObj);
+    // taskArray.unshift(taskObj);
+    await addTaskOnBackend(taskObj);
   }
-  await updateTaskOnBackend();
   render();
   form.reset();
 });
@@ -260,13 +276,14 @@ taskItemContainer.addEventListener('click', async e => {
   const taskLi = e.target.closest('li'); 
   if (!taskLi) return;
   const id = Number(taskLi.dataset.id);
+  taskId = id;
   const index = taskArray.findIndex(t => t.id === id);
   const task = taskArray[index];
 
   if (e.target.classList.contains('task-done')) {
     task.done = !task.done;
+    await editTaskOnBackend(task, taskId);
     cancelEdit();
-    await updateTaskOnBackend();
     render();
   } else if (e.target.classList.contains('task-edit')) {
     titleInput.focus();
@@ -299,7 +316,7 @@ taskItemContainer.addEventListener('click', async e => {
 overlay.addEventListener('click', async e => {
   if (e.target.classList.contains('conf-delete-btn')) {
     taskArray.splice(taskIndex, 1);
-    await updateTaskOnBackend();
+    await deleteTaskOnBackend(taskId);
     render();
     overlay.innerHTML = '';
     overlayToggle();
@@ -321,7 +338,6 @@ filterBtnArr.forEach(btn => {
     filterState = btn.dataset.filter;
     mainFilterBtn.innerHTML = `Filter: ${btn.innerHTML}`;
     cancelEdit();
-    await updateTaskOnBackend();
     render();
     filterBtnArr.forEach(btn => {
       filterBtnsToggle(btn, true);

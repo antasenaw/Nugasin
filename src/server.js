@@ -31,13 +31,27 @@ let taskArray = [
 
 app.get('/api/task', (req, res) => {
   res.json(taskArray);
-  console.log(taskArray);
 });
 
 app.post('/api/task', (req, res) => {
-  let body = req.body;
-  taskArray = body;
-  res.sendStatus(200);
+  const body = req.body;
+  taskArray.unshift(body);
+  res.sendStatus(201);
 })
+
+app.put('/api/task/:id', (req, res) => {
+  const body = req.body;
+  const id = Number(req.params.id);
+  const index = taskArray.findIndex(t => t.id === id);
+  taskArray[index] = body;
+  res.sendStatus(201);
+});
+
+app.delete('/api/task/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const index = taskArray.findIndex(t => t.id === id);
+  taskArray.splice(index, 1);
+  res.sendStatus(201);
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
