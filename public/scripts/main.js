@@ -21,44 +21,28 @@ const pastDueTaskElement = document.querySelector('.past-due');
 
 const overlay = document.querySelector('.overlay');
 
+const STORAGE_KEY = 'task_list';
+const DEFAULT_TASK_DATA = [];
 
-//MODEL
-const taskArray = [];
-
-async function getTaskFromBackend() {
-  const res = await fetch('/api/task');
-  const task = await res.json();
-  taskArray.length = 0;
-  task.forEach(t => {
-    taskArray.push(t);
-  });
-  console.log(task);
-  
-};
-
-async function addTaskOnBackend(taskObj) {
-  const res = await fetch('/api/task', {
-    method: 'POST',
-    headers: {'Content-Type' : 'application/json'},
-    body: JSON.stringify(taskObj)
-  });
+function getTasksFromStorage() {
+  const tasksString = localStorage.getItem(STORAGE_KEY);
+  if (!tasksString) {
+    return [];
+  }
+  try {
+    return JSON.parse(tasksString);
+  } catch (error) {
+    console.error("Error parsing tasks from localStorage:", error);
+    return [];
+  }
 }
 
-async function editTaskOnBackend(task, id) {
-  const res = await fetch(`/api/task/${id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type' : 'application/json' },
-    body: JSON.stringify(task)
-  });
-}
-
-async function deleteTaskOnBackend(id) {
-  const res = await fetch(`/api/task/${id}`, {
-    method: 'DELETE'
-  });
+function saveTasksToStorage(tasks) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
 function getFilteredArray() {
+  const taskArray = getTasksFromStorage();
   switch (filterState) {
   case 'done': return taskArray.filter(t => t.done);
   case 'past-due': return taskArray.filter(t => t.pastDue && !t.done);
@@ -69,6 +53,7 @@ function getFilteredArray() {
 }
 
 function calculateTaskCount() {
+  const taskArray = getTasksFromStorage();
   const now = new Date();
   let done = 0, nearDue = 0, pastDue = 0;
 
@@ -83,6 +68,7 @@ function calculateTaskCount() {
 
   return {
     total: taskArray.length - done,
+    all: taskArray.length,
     done,
     nearDue,
     pastDue
@@ -90,14 +76,27 @@ function calculateTaskCount() {
 }
 
 function updateTaskStatuses() {
+  const taskArray = getTasksFromStorage(); 
   const now = new Date();
+  let needsSave = false;
+
   taskArray.forEach(task => {
     const due = new Date(task.due);
     const diffDays = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
 
-    task.pastDue = diffDays <= 0 && !task.done;
-    task.nearDue = diffDays <= 2 && !task.done;
+    const newPastDue = diffDays <= 0 && !task.done;
+    const newNearDue = diffDays <= 2 && !task.done;
+
+    if (task.pastDue !== newPastDue || task.nearDue !== newNearDue) {
+        task.pastDue = newPastDue;
+        task.nearDue = newNearDue;
+        needsSave = true;
+    }
   });
+
+  if (needsSave) {
+      saveTasksToStorage(taskArray);
+  }
 }
 
 function getDataFromForm() {
@@ -111,6 +110,7 @@ function createId() {
 }
 
 function getTaskFromId(id) {
+  const taskArray = getTasksFromStorage();
   const task = taskArray.find(t => t.id === id);
   return task;
 }
@@ -173,9 +173,11 @@ function displayArray() {
 
 function displayCounters() {
   const counters = calculateTaskCount();
+  const percentage = (counters.all > 0) ? Math.round((counters.done / counters.all) * 100) : 0;
+  
   totalTaskElement.innerHTML = counters.total;
   doneTaskElement.innerHTML = counters.done;
-  doneTaskElement.previousElementSibling.innerHTML = `Selesai (${(Math.round(counters.done/taskArray.length * 100)) || 0}%)`;
+  doneTaskElement.previousElementSibling.innerHTML = `Selesai (${percentage}%)`;
   nearDueTaskElement.innerHTML = counters.nearDue;
   pastDueTaskElement.innerHTML = counters.pastDue;
 }
@@ -237,7 +239,6 @@ function cancelEdit() {
 }
 
 async function render() {
-  await getTaskFromBackend();
   form.reset();
   updateTaskStatuses();
   displayArray();
@@ -248,16 +249,27 @@ async function render() {
 
 form.addEventListener('submit', async e => {
   e.preventDefault();
-  const taskObj = isEditing ? {...getDataFromForm()} : {id: createId(), ...getDataFromForm()};
+  
+  const taskArray = getTasksFromStorage();
+  const taskObj = getDataFromForm();
   
   if (isEditing) {
-    let task = getTaskFromId(taskId);
-    task = {...task, ...taskObj};
-    await editTaskOnBackend(task, taskId);
+    const index = taskArray.findIndex(t => t.id === taskId);
+    if (index > -1) {
+        taskArray[index] = {...taskArray[index], ...taskObj}; 
+    }
     cancelEdit();
   } else {
-    await addTaskOnBackend(taskObj);
+    const newTask = {
+        id: createId(), 
+        ...taskObj,
+        done: false 
+    };
+    taskArray.unshift(newTask);
   }
+
+  saveTasksToStorage(taskArray);
+
   render();
   form.reset();
 });
@@ -278,9 +290,15 @@ function toggleGlobalTaskButtons() {
   document.querySelectorAll(`.task-btns-handler`).forEach(handler => handler.classList.toggle('hidden', false));
 }
 
-async function handleDoneTaskBtn(task, taskId) {
-  task.done = !task.done;
-  await editTaskOnBackend(task, taskId);
+async function handleDoneTaskBtn(task, id) {
+  const taskArray = getTasksFromStorage();
+  const index = taskArray.findIndex(t => t.id === id);
+
+  if (index > -1) {
+      taskArray[index].done = !taskArray[index].done;
+      saveTasksToStorage(taskArray);
+  }
+
   cancelEdit();
   render();
 }
@@ -288,6 +306,7 @@ async function handleDoneTaskBtn(task, taskId) {
 function handleEditTaskBtn(task, id) {
   titleInput.focus();
   isEditing = true;
+  taskId = id;
   inputFormHeaderIsEditingToggle(true);
 
   form.title.value = task.title;
@@ -302,6 +321,7 @@ function handleEditTaskBtn(task, id) {
 function handleDeleteTaskBtn(task, id) {
   displayDeleteConfirmationPopUp(task);
   overlayToggle();
+  taskId = id; 
   toggleTaskButtons(id, true, false);
   cancelEdit();
 }
@@ -314,7 +334,7 @@ taskItemContainer.addEventListener('click', async e => {
   const task = getTaskFromId(id);
 
   if (e.target.classList.contains('task-done')) {
-    await handleDoneTaskBtn(task, id);
+    handleDoneTaskBtn(task, id);
   } else if (e.target.classList.contains('task-edit')) {
     handleEditTaskBtn(task, id);
   } else if (e.target.classList.contains('task-delete')) {
@@ -330,7 +350,10 @@ taskItemContainer.addEventListener('click', async e => {
 
 overlay.addEventListener('click', async e => {
   if (e.target.classList.contains('conf-delete-btn')) {
-    await deleteTaskOnBackend(taskId);
+    let taskArray = getTasksFromStorage();
+    taskArray = taskArray.filter(t => t.id !== taskId);
+    saveTasksToStorage(taskArray);
+
     render();
     overlay.innerHTML = '';
     overlayToggle();

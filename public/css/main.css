@@ -43,6 +43,16 @@ textarea {
 .header-container {
   padding: 2rem;
   border-radius: 1rem;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-btn-div{
+  display: flex;
+  gap: 1rem;
 }
 
 .main-container {
@@ -323,6 +333,15 @@ textarea {
   /* html, body {
     font-size: 14px;
   } */
+
+  .header-container {
+    flex-wrap: wrap;
+    padding: 1rem;
+  }
+  
+  .header-btn-div {
+    flex-direction: column;
+  }
 
   .body-container {
     margin: 1rem;

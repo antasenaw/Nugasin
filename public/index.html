@@ -1,22 +1,22 @@
 <!DOCTYPE html>
 
 <html>
-
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Nugasin</title>
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/main.css" />
   </head>
 
   <body>
-    
-
     <div class="body-container">
-
       <header class="header-container general-style">
         <h1>Nugasin</h1>
+        <div class="header-btn-div">
+          <button class="general-style button-general">Export tugas</button>
+          <button class="general-style button-general">Import tugas</button>
+        </div>
       </header>
 
       <main class="main-container">
@@ -53,12 +53,39 @@
             <div class="task-list-header">
               <h2>Daftar tugas</h2>
               <div>
-                <button class="general-style main-filter-btn">Filter: Semua</button>
-                <button class="general-style filter-btn hidden" data-filter="all">Semua</button>
-                <button class="general-style filter-btn hidden" data-filter="undone">Belum dikerjakan</button>
-                <button class="general-style filter-btn hidden" data-filter="near-due">Dekat deadline</button>
-                <button class="general-style filter-btn hidden" data-filter="past-due">Lewat deadline</button>
-                <button class="general-style filter-btn hidden" data-filter="done">Selesai</button>
+                <button class="general-style main-filter-btn">
+                  Filter: Semua
+                </button>
+                <button
+                  class="general-style filter-btn hidden"
+                  data-filter="all"
+                >
+                  Semua
+                </button>
+                <button
+                  class="general-style filter-btn hidden"
+                  data-filter="undone"
+                >
+                  Belum dikerjakan
+                </button>
+                <button
+                  class="general-style filter-btn hidden"
+                  data-filter="near-due"
+                >
+                  Dekat deadline
+                </button>
+                <button
+                  class="general-style filter-btn hidden"
+                  data-filter="past-due"
+                >
+                  Lewat deadline
+                </button>
+                <button
+                  class="general-style filter-btn hidden"
+                  data-filter="done"
+                >
+                  Selesai
+                </button>
               </div>
             </div>
             <ul class="task-item-container"></ul>
@@ -66,23 +93,51 @@
           <section class="task-input general-style">
             <div class="task-input-header">
               <h2>Tambah tugas</h2>
-              <button class="general-style hidden cancel-edit-btn">Batal</button>
+              <button class="general-style hidden cancel-edit-btn">
+                Batal
+              </button>
             </div>
             <form class="task-form">
               <fieldset class="form-fieldset">
                 <label for="title">Judul tugas</label>
-                <input class="general-style" type="text" id="title" name="title" required>
+                <input
+                  class="general-style"
+                  type="text"
+                  id="title"
+                  name="title"
+                  required
+                />
                 <label for="subject">Subjek tugas</label>
-                <input class="general-style" type="text" id="subject" name="subject" required>
+                <input
+                  class="general-style"
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  required
+                />
                 <label for="due">Tenggat</label>
-                <input class="general-style" type="datetime-local" id="due" name="due" required>
+                <input
+                  class="general-style"
+                  type="datetime-local"
+                  id="due"
+                  name="due"
+                  required
+                />
                 <label for="details">Detail tugas</label>
-                <textarea class="general-style" id="details" name="details" required rows="1"></textarea>
-                <button type="submit" class="submit-task-btn general-style">Tambah tugas</button>
+                <textarea
+                  class="general-style"
+                  id="details"
+                  name="details"
+                  required
+                  rows="1"
+                ></textarea>
+                <button type="submit" class="submit-task-btn general-style">
+                  Tambah tugas
+                </button>
               </fieldset>
             </form>
           </section>
-        </div>  
+        </div>
       </main>
 
       <div class="overlay hidden"></div>
@@ -90,5 +145,4 @@
 
     <script type="module" src="scripts/main.js"></script>
   </body>
-
 </html>
