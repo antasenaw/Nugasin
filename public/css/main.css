@@ -46,9 +46,9 @@ textarea {
 
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
+  gap: 2rem;
 }
+
 
 .header-btn-div{
   display: flex;
@@ -337,6 +337,8 @@ textarea {
   .header-container {
     flex-wrap: wrap;
     padding: 1rem;
+    gap: 1rem;
+    flex-direction: column;
   }
   
   .header-btn-div {

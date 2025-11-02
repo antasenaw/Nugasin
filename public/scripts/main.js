@@ -7,6 +7,8 @@ let filterState = 'all';
 const mainFilterBtn = document.querySelector('.main-filter-btn');
 const filterBtnArr = document.querySelectorAll('.filter-btn');
 const taskItemContainer = document.querySelector('.task-item-container');
+const navbarBtn = document.querySelector('.navbar-btn');
+const navbar = document.querySelectorAll('.navbar');
 
 const form = document.querySelector('.task-form');
 const titleInput = document.querySelector('input[name="title"]');
@@ -381,7 +383,7 @@ filterBtnArr.forEach(btn => {
     });
     filterBtnsToggle(mainFilterBtn, false);
   });
-})
+});
 
 document.addEventListener('click', e => {
   if (!e.target.classList.contains('task-btns-handler')) {
@@ -394,6 +396,24 @@ document.addEventListener('click', e => {
     filterBtnsToggle(mainFilterBtn, false);
   }
 });
+
+navbarBtn.addEventListener('click', () => {
+  filterBtnsToggle(navbarBtn, true);
+  navbar.forEach(b => {
+    filterBtnsToggle(b, false);
+  })
+});
+
+navbar.forEach(b => {
+  b.addEventListener('click', () => {
+  navbar.forEach(b => {
+    filterBtnsToggle(b, true);
+  });
+  filterBtnsToggle(navbarBtn, false);
+  });
+});
+
+
 
 //MAIN
 
