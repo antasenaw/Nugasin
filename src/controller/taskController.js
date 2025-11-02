@@ -29,7 +29,7 @@ export function getTask (req, res) {
 export function addTask (req, res) {
   const body = req.body;
   taskArray.unshift(body);
-  res.sendStatus(201);
+  res.status(201).json(body);
 }
 
 export function editTask (req, res) {

@@ -1,0 +1,23 @@
+###
+GET http://localhost:3000/
+
+###
+GET http://localhost:3000/api/task
+
+###
+POST http://localhost:3000/api/task
+Content-Type: application/json
+
+{
+    "id": 3,
+    "details": "Ketik di LibreOffice dan makan dengan sapi",
+    "due": "2025-10-20T23:59",
+    "subject": "PBO",
+    "title": "Tugas 3",
+    "pastDue": false,
+    "nearDue": false,
+    "done": false
+}
+
+###
+GET http://localhost:3000/api/task

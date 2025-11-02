@@ -32,6 +32,8 @@ async function getTaskFromBackend() {
   task.forEach(t => {
     taskArray.push(t);
   });
+  console.log(task);
+  
 };
 
 async function addTaskOnBackend(taskObj) {
