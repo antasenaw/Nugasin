@@ -9,6 +9,6 @@ const port = 3000;
 
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/api/task', routes);
+app.use('/api/tasks', routes);
 
-app.listen(port, () => console.log(`Example app listening on port http://localhost:${port}!`));
+app.listen(port, () => console.log(`App listening on port http://localhost:${port}!`));

@@ -11,6 +11,8 @@ const navbarBtn = document.querySelector(".navbar-btn");
 const navbar = document.querySelectorAll(".navbar");
 const guideBtn = document.querySelector(".guide-btn");
 const aboutBtn = document.querySelector(".about-btn");
+const importBtn = document.querySelector(".import-btn");
+const exportBtn = document.querySelector(".export-btn");
 
 const form = document.querySelector(".task-form");
 const titleInput = document.querySelector('input[name="title"]');
@@ -126,6 +128,20 @@ function getTaskFromId(id) {
   return task;
 }
 
+async function getTaskToBackend() {
+  const res = await fetch('/api/tasks');
+  const data = res.json();
+  console.log(data)
+}
+
+async function postTaskToBackend(taskArray) {
+  const res = await fetch('/api/tasks', {
+    method: 'POST',
+    headers: { 'Content-Type' : 'application/json' },
+    body: taskArray
+  });
+}
+
 //VIEW
 
 function formatDate(dateString) {
@@ -233,182 +249,206 @@ function displayDeleteConfirmationPopUp(task) {
 function displayGuide() {
   overlay.innerHTML = `
     <div class="general-style guide-container">
-      <div>
+      <div class="guide-header">
         <h2>Guide</h2>
         <button class="general-style button-general">Close</button>
       </div>
-      <p>
-        Alat manajemen tugas sederhana yang menggunakan penyimpanan lokal
-        (Local Storage) peramban Anda.
-      </p>
-      <section id="tambah-edit-tugas">
-        <h3>1. Menambahkan dan Mengedit Tugas ➕✍️</h3>
+      <div class="guide-content">
+        <p>
+          Nugasin adalah alat manajemen tugas sederhana yang menggunakan penyimpanan lokal
+          (Local Storage) peramban Anda.
+        </p>
+        <section id="tambah-edit-tugas">
+          <h3>1. Menambahkan dan Mengedit Tugas ➕✍️</h3>
 
-        <article id="menambah-tugas">
-          <h4>A. Menambahkan Tugas Baru</h4>
+          <article id="menambah-tugas">
+            <h4>A. Menambahkan Tugas Baru</h4>
+            <ol>
+              <li>
+                Akses Formulir: Formulir input tugas berada di bagian "Tambah
+                Tugas".
+              </li>
+              <li>
+                Isi Detail: Masukkan Judul, Subjek, Deadline (Tanggal dan
+                waktu), dan Detail tugas.
+              </li>
+              <li>Simpan: Klik tombol "Tambah tugas".</li>
+            </ol>
+          </article>
+
+          <article id="mengedit-tugas">
+            <h4>B. Mengedit Tugas</h4>
+            <ol>
+              <li>Cari Tugas: Temukan tugas di Daftar Tugas.</li>
+              <li>
+                Akses Menu: Klik tombol opsi <code>⋮</code> (tiga titik) di
+                sebelah kanan tugas.
+              </li>
+              <li>Pilih Edit: Klik tombol "Edit".</li>
+              <li>Ubah Data: Koreksi atau perbarui detail tugas.</li>
+              <li>
+                Simpan Perubahan: Klik tombol "Edit tugas" (tombol submit yang
+                berubah).
+              </li>
+              <li>
+                Batal Edit: Klik tombol "Batal" untuk keluar dari mode edit
+                tanpa menyimpan.
+              </li>
+            </ol>
+          </article>
+        </section>
+
+        <section id="mengelola-tugas">
+          <h3>2. Mengelola Tugas (CRUD Operations) ⚙️</h3>
+
+          <article id="detail-tugas">
+            <h4>A. Melihat Detail Tugas</h4>
+            <p>
+              Cukup klik di mana saja pada item tugas di daftar untuk
+              memunculkan *popup* detail lengkap.
+            </p>
+          </article>
+
+          <article id="tandai-selesai">
+            <h4>B. Menandai Selesai / Batal (Done/Undone)</h4>
+            <p>
+              Akses menu tugas melalui tombol <code>⋮</code>, lalu klik tombol
+              yang sesuai:
+            </p>
+            <ul>
+              <li>Jika belum selesai: "Tandai selesai".</li>
+              <li>Jika sudah selesai: "Batal".</li>
+            </ul>
+          </article>
+
+          <article id="menghapus-tugas">
+            <h4>C. Menghapus Tugas</h4>
+            <p>
+              Akses menu tugas melalui tombol <code>⋮</code>, lalu klik
+              "Hapus". Konfirmasi penghapusan pada *popup* berikutnya.
+            </p>
+          </article>
+        </section>
+
+        <section id="status-dashboard">
+          <h3>3. Memahami Status Tugas dan Dasbor 📊</h3>
+
+          <article id="status-di-daftar">
+            <h4>A. Status Tugas (Di Daftar)</h4>
+            <p>
+              Status ditunjukkan dengan tulisan miring di sebelah judul tugas:
+            </p>
+            <table>
+              <thead>
+                <tr>
+                  <th class="th1">Status</th>
+                  <th class="th2">Arti (Kondisi)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Selesai</strong></td>
+                  <td>
+                    Tugas telah diselesaikan dan ditandai <code>done</code>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Selesai terlambat</strong></td>
+                  <td>
+                    Tugas diselesaikan setelah <em>deadline</em> berlalu.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Belum dikerjakan (Lewat deadline!)</strong></td>
+                  <td>
+                    Tugas belum diselesaikan dan <em>deadline</em> telah
+                    berlalu.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Belum dikerjakan (Dekat deadline!)</strong></td>
+                  <td>
+                    Tugas belum diselesaikan dan <em>deadline</em> tersisa 2
+                    hari atau kurang.
+                  </td>
+                </tr>
+                <tr>
+                  <td class="td1"><strong>Belum dikerjakan</strong></td>
+                  <td class="td2">
+                    Tugas belum diselesaikan, dan <em>deadline</em> masih
+                    tersisa lebih dari 2 hari.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </article>
+
+          <article id="dashboard-counter">
+            <h4>B. Dashboard Counter</h4>
+            <p>Ringkasan pekerjaan di bagian atas layar:</p>
+            <ul>
+              <li>Total Tugas: Jumlah tugas yang Belum Selesai.</li>
+              <li>
+                Selesai (X%): Jumlah tugas yang telah selesai dan
+                persentasenya.
+              </li>
+              <li>
+                Dekat Deadline: Jumlah tugas yang *near-due* dan belum
+                selesai.
+              </li>
+              <li>
+                Lewat Deadline: Jumlah tugas yang *past-due* dan belum
+                selesai.
+              </li>
+            </ul>
+          </article>
+        </section>
+
+        <section id="filtering">
+          <h3>4. Menyaring Daftar Tugas (Filter) 🔍</h3>
           <ol>
+            <li>Akses Filter: Klik tombol "Filter: [Status Saat Ini]".</li>
             <li>
-              Akses Formulir: Formulir input tugas berada di bagian "Tambah
-              Tugas".
+              Pilih Filter: Klik salah satu opsi yang muncul untuk memfokuskan
+              daftar Anda:
             </li>
+            <ul>
+              <li>Semua (Default)</li>
+              <li>Selesai</li>
+              <li>Belum Selesai</li>
+              <li>Dekat Deadline</li>
+              <li>Lewat Deadline</li>
+            </ul>
             <li>
-              Isi Detail: Masukkan Judul, Subjek, Deadline (Tanggal dan
-              waktu), dan Detail tugas.
-            </li>
-            <li>Simpan: Klik tombol "Tambah tugas".</li>
-          </ol>
-        </article>
-
-        <article id="mengedit-tugas">
-          <h4>B. Mengedit Tugas</h4>
-          <ol>
-            <li>Cari Tugas: Temukan tugas di Daftar Tugas.</li>
-            <li>
-              Akses Menu: Klik tombol opsi <code>⋮</code> (tiga titik) di
-              sebelah kanan tugas.
-            </li>
-            <li>Pilih Edit: Klik tombol "Edit".</li>
-            <li>Ubah Data: Koreksi atau perbarui detail tugas.</li>
-            <li>
-              Simpan Perubahan: Klik tombol "Edit tugas" (tombol submit yang
-              berubah).
-            </li>
-            <li>
-              Batal Edit: Klik tombol "Batal" untuk keluar dari mode edit
-              tanpa menyimpan.
+              Tutup Filter: Klik tombol filter utama atau di luar menu filter.
             </li>
           </ol>
-        </article>
-      </section>
-
-      <section id="mengelola-tugas">
-        <h3>2. Mengelola Tugas (CRUD Operations) ⚙️</h3>
-
-        <article id="detail-tugas">
-          <h4>A. Melihat Detail Tugas</h4>
-          <p>
-            Cukup klik di mana saja pada item tugas di daftar untuk
-            memunculkan *popup* detail lengkap.
-          </p>
-        </article>
-
-        <article id="tandai-selesai">
-          <h4>B. Menandai Selesai / Batal (Done/Undone)</h4>
-          <p>
-            Akses menu tugas melalui tombol <code>⋮</code>, lalu klik tombol
-            yang sesuai:
-          </p>
-          <ul>
-            <li>Jika belum selesai: "Tandai selesai".</li>
-            <li>Jika sudah selesai: "Batal".</li>
-          </ul>
-        </article>
-
-        <article id="menghapus-tugas">
-          <h4>C. Menghapus Tugas</h4>
-          <p>
-            Akses menu tugas melalui tombol <code>⋮</code>, lalu klik
-            "Hapus". Konfirmasi penghapusan pada *popup* berikutnya.
-          </p>
-        </article>
-      </section>
-
-      <section id="status-dashboard">
-        <h3>3. Memahami Status Tugas dan Dasbor 📊</h3>
-
-        <article id="status-di-daftar">
-          <h4>A. Status Tugas (Di Daftar)</h4>
-          <p>
-            Status ditunjukkan dengan tulisan miring di sebelah judul tugas:
-          </p>
-          <table>
-            <thead>
-              <tr>
-                <th>Status</th>
-                <th>Arti (Kondisi)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Selesai</strong></td>
-                <td>
-                  Tugas telah diselesaikan dan ditandai <code>done</code>.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Selesai terlambat</strong></td>
-                <td>
-                  Tugas diselesaikan setelah <em>deadline</em> berlalu.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Belum dikerjakan (Lewat deadline!)</strong></td>
-                <td>
-                  Tugas belum diselesaikan dan <em>deadline</em> telah
-                  berlalu.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Belum dikerjakan (Dekat deadline!)</strong></td>
-                <td>
-                  Tugas belum diselesaikan dan <em>deadline</em> tersisa 2
-                  hari atau kurang.
-                </td>
-              </tr>
-              <tr>
-                <td><strong>Belum dikerjakan</strong></td>
-                <td>
-                  Tugas belum diselesaikan, dan <em>deadline</em> masih
-                  tersisa lebih dari 2 hari.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </article>
-
-        <article id="dashboard-counter">
-          <h4>B. Dashboard Counter</h4>
-          <p>Ringkasan pekerjaan di bagian atas layar:</p>
-          <ul>
-            <li>Total Tugas: Jumlah tugas yang Belum Selesai.</li>
-            <li>
-              Selesai (X%): Jumlah tugas yang telah selesai dan
-              persentasenya.
-            </li>
-            <li>
-              Dekat Deadline: Jumlah tugas yang *near-due* dan belum
-              selesai.
-            </li>
-            <li>
-              Lewat Deadline: Jumlah tugas yang *past-due* dan belum
-              selesai.
-            </li>
-          </ul>
-        </article>
-      </section>
-
-      <section id="filtering">
-        <h3>4. Menyaring Daftar Tugas (Filter) 🔍</h3>
-        <ol>
-          <li>Akses Filter: Klik tombol "Filter: [Status Saat Ini]".</li>
-          <li>
-            Pilih Filter: Klik salah satu opsi yang muncul untuk memfokuskan
-            daftar Anda:
-          </li>
-          <ul>
-            <li>Semua (Default)</li>
-            <li>Selesai</li>
-            <li>Belum Selesai</li>
-            <li>Dekat Deadline</li>
-            <li>Lewat Deadline</li>
-          </ul>
-          <li>
-            Tutup Filter: Klik tombol filter utama atau di luar menu filter.
-          </li>
-        </ol>
-      </section>
+        </section>
+      </div>
     </div>
+  `;
+}
 
+function displayExportPopup() {
+  overlay.innerHTML = `
+    <div class="auth-popup general-style">
+      <div class="auth-header">
+        <h2>Export tasks</h2>
+        <button class="general-style button-general">Close</button>
+      </div>
+      <div class="auth-content">
+        <p>To export task, you have to make a login credential.</p>
+        <form class="auth-form">
+          <fieldset>
+            <label for="usn">Username</label>
+            <input class="general-style" type="text" id="usn" name="usn" required>
+            <label for="pw">Password</label>
+            <input class="general-style" type="text" id="pw" name="pw" required>
+            <button class="general-style button-general" type="submit">Export tasks</button>
+          </fieldset>
+        </form>
+      </div>
+    </div>
   `;
 }
 
@@ -633,6 +673,17 @@ navbar.forEach((b) => {
 guideBtn.addEventListener("click", e => {
   displayGuide();
   overlayToggle();
+});
+
+importBtn.addEventListener('click', async () => {
+  await get();
+});
+
+exportBtn.addEventListener('click', async () => {
+  displayExportPopup();
+  overlayToggle();
+  const taskArray = JSON.stringify(getTasksFromStorage());
+  const data = await postTaskToBackend(taskArray);
 });
 
 //MAIN
