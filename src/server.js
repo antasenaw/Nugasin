@@ -2,7 +2,7 @@ import express from "express";
 import routes from "./routes/taskRoutes.js"
 import { connectDB } from "./config/db.js";
 
-// connectDB();
+connectDB();
 
 const app = express();
 const port = 3000;

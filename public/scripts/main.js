@@ -118,6 +118,12 @@ function getDataFromForm() {
   return taskObj;
 }
 
+function getAuthCredential(authForm) {
+  const authCred = new FormData(authForm);
+  const authObj = Object.fromEntries(authCred.entries());
+  return authObj;
+}
+
 function createId() {
   return Date.now() + Math.floor(Math.random() * 1000);
 }
@@ -134,11 +140,16 @@ async function getTaskToBackend() {
   console.log(data)
 }
 
-async function postTaskToBackend(taskArray) {
+async function postTaskToBackend(authObj, taskArray) {
+  const payload = {
+    authObj,
+    taskArray
+  };
+
   const res = await fetch('/api/tasks', {
     method: 'POST',
     headers: { 'Content-Type' : 'application/json' },
-    body: taskArray
+    body: JSON.stringify(payload)
   });
 }
 
@@ -441,10 +452,10 @@ function displayExportPopup() {
         <form class="auth-form">
           <fieldset>
             <label for="usn">Username</label>
-            <input class="general-style" type="text" id="usn" name="usn" required>
+            <input class="general-style" type="text" id="usn" name="usn" required minlength="3">
             <label for="pw">Password</label>
-            <input class="general-style" type="text" id="pw" name="pw" required>
-            <button class="general-style button-general" type="submit">Export tasks</button>
+            <input class="general-style" type="text" id="pw" name="pw" required minlength="8">
+            <button class="submit-auth-btn general-style button-general" type="submit">Export tasks</button>
           </fieldset>
         </form>
       </div>
@@ -609,7 +620,10 @@ overlay.addEventListener("click", async (e) => {
     overlayToggle();
   } else if (
     e.target === overlay ||
-    e.target.tagName === 'BUTTON'
+    (
+      e.target.tagName === 'BUTTON' &&
+      !e.target.classList.contains('submit-auth-btn')
+    )
   ) {
     overlay.innerHTML = "";
     overlayToggle();
@@ -682,8 +696,15 @@ importBtn.addEventListener('click', async () => {
 exportBtn.addEventListener('click', async () => {
   displayExportPopup();
   overlayToggle();
-  const taskArray = JSON.stringify(getTasksFromStorage());
-  const data = await postTaskToBackend(taskArray);
+
+  const authForm = document.querySelector('.auth-form')
+  
+  authForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const authObj = getAuthCredential(authForm);
+    const taskArray = getTasksFromStorage();
+    postTaskToBackend(authObj, taskArray);
+  });
 });
 
 //MAIN
