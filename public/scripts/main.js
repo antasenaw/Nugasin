@@ -140,13 +140,24 @@ async function getTaskToBackend() {
   console.log(data)
 }
 
+async function getTaskFromBackend(authObj) {
+  const res = await fetch ('/api/tasks/import', {
+    method: 'POST',
+    headers: { 'Content-Type' : 'application/json' },
+    body: JSON.stringify(authObj)
+  });
+
+  const data = res.json();
+  return data;
+}
+
 async function postTaskToBackend(authObj, taskArray) {
   const payload = {
     authObj,
     taskArray
   };
 
-  const res = await fetch('/api/tasks', {
+  const res = await fetch('/api/tasks/export', {
     method: 'POST',
     headers: { 'Content-Type' : 'application/json' },
     body: JSON.stringify(payload)
@@ -440,15 +451,15 @@ function displayGuide() {
   `;
 }
 
-function displayExportPopup() {
+function displayExportImportPopup(exportTask) {
   overlay.innerHTML = `
     <div class="auth-popup general-style">
       <div class="auth-header">
-        <h2>Export tasks</h2>
+        <h2>${exportTask ? 'Export' : 'Import'} tasks</h2>
         <button class="general-style button-general">Close</button>
       </div>
       <div class="auth-content">
-        <p>To export task, you have to make a login credential.</p>
+        <p>To ${exportTask?'export':'import'} task, you have to ${exportTask?'make a':'submit your'} login credential.</p>
         <form class="auth-form">
           <fieldset>
             <label for="usn">Username</label>
@@ -690,20 +701,37 @@ guideBtn.addEventListener("click", e => {
 });
 
 importBtn.addEventListener('click', async () => {
-  await get();
-});
-
-exportBtn.addEventListener('click', async () => {
-  displayExportPopup();
+  displayExportImportPopup(false);
   overlayToggle();
 
   const authForm = document.querySelector('.auth-form')
   
-  authForm.addEventListener('submit', e => {
+  authForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const authObj = getAuthCredential(authForm);
+    const taskArray = await getTaskFromBackend(authObj);
+    authForm.reset();
+    overlay.innerHTML = '';
+    overlayToggle();
+    saveTasksToStorage(taskArray);
+    render();
+  });
+});
+
+exportBtn.addEventListener('click', async () => {
+  displayExportImportPopup(true);
+  overlayToggle();
+
+  const authForm = document.querySelector('.auth-form')
+  
+  authForm.addEventListener('submit', async e => {
     e.preventDefault();
     const authObj = getAuthCredential(authForm);
     const taskArray = getTasksFromStorage();
-    postTaskToBackend(authObj, taskArray);
+    await postTaskToBackend(authObj, taskArray);
+    authForm.reset();
+    overlay.innerHTML = '';
+    overlayToggle();
   });
 });
 

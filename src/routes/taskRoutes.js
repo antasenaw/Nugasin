@@ -3,11 +3,15 @@ import { userTasks } from "../model.js";
 
 const routes = express.Router();
 
-routes.get('/', (req, res) => {
-  res.status(200).json('hello world');
+routes.post('/import', async (req, res) => {
+  const { usn, pw } = await req.body;
+
+  let task = await userTasks.findOne({ user: usn });
+  
+  res.status(200).json(task.tasks);
 });
 
-routes.post('/', async (req, res) => {
+routes.post('/export', async (req, res) => {
   const { authObj, taskArray } = await req.body;
   const { usn, pw } = await authObj;
 
@@ -15,9 +19,7 @@ routes.post('/', async (req, res) => {
     user: usn,
     password: pw,
     tasks: taskArray
-  });
-
-  await newTasks.save();
+  }).save();
 
   res.status(200).json(`Your tasks have been exported succesfully!`);
 });
