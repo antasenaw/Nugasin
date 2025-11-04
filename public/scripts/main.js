@@ -119,9 +119,9 @@ function getDataFromForm() {
 }
 
 function getAuthCredential(authForm) {
-  const authCred = new FormData(authForm);
-  const authObj = Object.fromEntries(authCred.entries());
-  return authObj;
+  const authCredIn = new FormData(authForm);
+  const authCred = Object.fromEntries(authCredIn.entries());
+  return authCred;
 }
 
 function createId() {
@@ -132,36 +132,6 @@ function getTaskFromId(id) {
   const taskArray = getTasksFromStorage();
   const task = taskArray.find((t) => t.id === id);
   return task;
-}
-
-async function getTaskToBackend() {
-  const res = await fetch('/api/tasks');
-  const data = res.json();
-  console.log(data)
-}
-
-async function getTaskFromBackend(authObj) {
-  const res = await fetch ('/api/tasks/import', {
-    method: 'POST',
-    headers: { 'Content-Type' : 'application/json' },
-    body: JSON.stringify(authObj)
-  });
-
-  const data = res.json();
-  return data;
-}
-
-async function postTaskToBackend(authObj, taskArray) {
-  const payload = {
-    authObj,
-    taskArray
-  };
-
-  const res = await fetch('/api/tasks/export', {
-    method: 'POST',
-    headers: { 'Content-Type' : 'application/json' },
-    body: JSON.stringify(payload)
-  });
 }
 
 //VIEW
@@ -700,39 +670,82 @@ guideBtn.addEventListener("click", e => {
   overlayToggle();
 });
 
-importBtn.addEventListener('click', async () => {
+importBtn.addEventListener('click', () => {
   displayExportImportPopup(false);
   overlayToggle();
 
-  const authForm = document.querySelector('.auth-form')
+  const authForm = document.querySelector('.auth-form');
   
-  authForm.addEventListener('submit', async e => {
+  const importSubmitHandler = async (e) => {
     e.preventDefault();
-    const authObj = getAuthCredential(authForm);
-    const taskArray = await getTaskFromBackend(authObj);
-    authForm.reset();
-    overlay.innerHTML = '';
-    overlayToggle();
-    saveTasksToStorage(taskArray);
-    render();
-  });
+    const authCred = getAuthCredential(authForm);
+    
+    try {
+      const response = await fetch ('/api/tasks/import', {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json' },
+          body: JSON.stringify(authCred)
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Import Failed: ${errorData.message || 'Unknown error.'}`);
+        return;
+      }
+      const taskArray = await response.json();
+      saveTasksToStorage(taskArray);
+      alert('Import successful! Local tasks updated.');
+    } catch (error) {
+      console.log("Fetch/Parse error:", error);
+      console.log('A network error occurred.');
+    } finally {
+      authForm.reset();
+      overlay.innerHTML = '';
+      overlayToggle();
+      render();
+      authForm.removeEventListener('submit', importSubmitHandler);
+    }
+  };
+
+  authForm.addEventListener('submit', importSubmitHandler);
 });
 
-exportBtn.addEventListener('click', async () => {
+exportBtn.addEventListener('click', () => {
   displayExportImportPopup(true);
   overlayToggle();
 
   const authForm = document.querySelector('.auth-form')
   
-  authForm.addEventListener('submit', async e => {
+  const exportSubmitHandler = async (e) => {
     e.preventDefault();
-    const authObj = getAuthCredential(authForm);
+    const authCred = getAuthCredential(authForm);
     const taskArray = getTasksFromStorage();
-    await postTaskToBackend(authObj, taskArray);
-    authForm.reset();
-    overlay.innerHTML = '';
-    overlayToggle();
-  });
+    
+    const payload = { authCred, taskArray };
+
+    try {
+      const response = await fetch('/api/tasks/export', {
+          method: 'POST',
+          headers: { 'Content-Type' : 'application/json' },
+          body: JSON.stringify(payload)
+      });
+      const responseData = await response.json();
+      if (!response.ok) {
+        alert(`Export Failed: ${responseData.message || 'Unknown error.'}`);
+        return;
+      }
+      alert(`Export Successful: ${responseData.message}`);
+    } catch (error) {
+      console.error("Fetch/Parse error:", error);
+      alert('A network error occurred. Check the console.');
+    } finally {
+      authForm.reset();
+      overlay.innerHTML = '';
+      overlayToggle();
+      authForm.removeEventListener('submit', exportSubmitHandler);
+    }
+  };
+
+  authForm.addEventListener('submit', exportSubmitHandler);
 });
 
 //MAIN
